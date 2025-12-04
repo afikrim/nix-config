@@ -37,26 +37,26 @@ in
   i18n.defaultLocale = "en_US.UTF-8";
 
   ################
-  # X11 / GNOME  #
-  ################
-
-  services.xserver.enable = true;
-
-  services.displayManager.gdm.enable = true;
-  services.desktopManager.gnome.enable = true;
-
-  services.xserver.xkb = {
-    layout = "us";
-    variant = "";
-  };
-
-  ################
   # HYPRLAND     #
   ################
 
   programs.hyprland = {
     enable = true;
     xwayland.enable = true;
+  };
+
+  services.greetd = {
+    enable = true;
+    settings = {
+      default_session = {
+        command = "${pkgs.greetd.agreety}/bin/agreety --cmd Hyprland";
+        user = "greeter";
+      };
+      initial_session = {
+        command = "Hyprland";
+        user = "azizf";
+      };
+    };
   };
 
   xdg.portal = {
@@ -122,12 +122,6 @@ in
   };
 
   networking.firewall.allowedTCPPorts = [ 22 ];
-
-  services.displayManager.autoLogin.enable = false;
-  services.displayManager.autoLogin.user = "azizf";
-
-  systemd.services."getty@tty1".enable = false;
-  systemd.services."autovt@tty1".enable = false;
 
   virtualisation.docker.enable = true;
 
