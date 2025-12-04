@@ -2,6 +2,7 @@
 
 let
   ruby_3_3_6 = pkgs.callPackage ../../pkgs/ruby_3_3_6.nix { };
+  azizGroup = config.users.users.azizf.group or "users";
 in
 {
   imports = [
@@ -129,6 +130,14 @@ in
     enable = true;
     enableSSHSupport = true;
     pinentryPackage = pkgs.pinentry-qt;
+  };
+
+  system.activationScripts.hyprlandConfig = {
+    deps = [ "users" ];
+    text = ''
+      install -d -m755 -o azizf -g ${azizGroup} /home/azizf/.config/hypr
+      install -m644 -o azizf -g ${azizGroup} ${./hypr/hyprland.conf} /home/azizf/.config/hypr/hyprland.conf
+    '';
   };
 
   ################
