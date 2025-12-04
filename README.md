@@ -1,17 +1,17 @@
 # nix-config
 
-Shareable flake-based NixOS configuration for the Azik Fikri VM running inside UTM.
+Shareable flake-based NixOS configuration for the Azik Fikri personal VM (formerly “utm”).
 
 ## Layout
 
-- `flake.nix`: entry point describing available `nixosConfigurations` (`utm`).
-- `hosts/utm`: host-specific settings plus generated hardware profile.
+- `flake.nix`: entry point describing available `nixosConfigurations` (`personal`).
+- `hosts/personal`: host-specific settings plus generated hardware profile.
 - `pkgs`: custom Ruby derivations referenced by the host config.
 
 ## Apply the configuration
 
 ```bash
-sudo nixos-rebuild switch --flake /home/azizf/nix-config#utm
+sudo nixos-rebuild switch --flake /home/azizf/nix-config#personal
 ```
 
 ## Update inputs

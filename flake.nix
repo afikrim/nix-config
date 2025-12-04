@@ -10,10 +10,10 @@
       system = "aarch64-linux";
     in {
       nixosConfigurations = {
-        utm = nixpkgs.lib.nixosSystem {
+        personal = nixpkgs.lib.nixosSystem {
           inherit system;
           modules = [
-            ./hosts/utm/default.nix
+            ./hosts/personal/default.nix
           ];
         };
       };
