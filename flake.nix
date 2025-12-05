@@ -16,6 +16,12 @@
             ./hosts/personal/default.nix
           ];
         };
+        mekari-m2-pro = nixpkgs.lib.nixosSystem {
+          inherit system;
+          modules = [
+            ./hosts/mekari-m2-pro/default.nix
+          ];
+        };
       };
     };
 }
