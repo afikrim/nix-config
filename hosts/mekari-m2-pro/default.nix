@@ -180,6 +180,7 @@ in
   nixpkgs.config.allowUnfree = true;
   nixpkgs.config.permittedInsecurePackages = with pkgs; [
     "lima-1.0.7"
+    "openssl-1.1.1w"
   ];
 
   environment.systemPackages = with pkgs; [
