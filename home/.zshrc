@@ -63,8 +63,8 @@ export CURRENT_THEME=$(detect_system_theme)
 # kubectl completion
 [[ -n $commands[kubectl] ]] && source <(kubectl completion zsh) 2>/dev/null
 
-# rbenv setup
-if command -v rbenv >/dev/null 2>&1; then
+# rbenv setup (macOS only)
+if [[ "$OSTYPE" == "darwin"* ]] && command -v rbenv >/dev/null 2>&1; then
     if [[ -d "/opt/homebrew/opt/rbenv" ]]; then
         FPATH="/opt/homebrew/opt/rbenv/completions:$FPATH"
         autoload -U compinit && compinit
@@ -79,11 +79,13 @@ if command -v pyenv >/dev/null 2>&1; then
     eval "$(pyenv init - zsh)"
 fi
 
-# nvm setup
-export NVM_DIR="$HOME/.nvm"
-if [[ -d "$NVM_DIR" && -f "$NVM_DIR/nvm.sh" ]]; then
-    source "$NVM_DIR/nvm.sh"
-    export PATH="$NVM_DIR/versions/node/$(nvm version)/bin:$PATH"
+# nvm setup (macOS only)
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    export NVM_DIR="$HOME/.nvm"
+    if [[ -d "$NVM_DIR" && -f "$NVM_DIR/nvm.sh" ]]; then
+        source "$NVM_DIR/nvm.sh"
+        export PATH="$NVM_DIR/versions/node/$(nvm version)/bin:$PATH"
+    fi
 fi
 
 export ANDROID_HOME=~/Library/Android/sdk
@@ -367,7 +369,8 @@ load_plugin() {
 
 # Core plugins
 load_plugin "$HOME/.zsh/plugins/dotbare/dotbare.plugin.zsh"
-load_plugin "$HOME/.zsh/plugins/zsh-nvm/zsh-nvm.plugin.zsh"
+load_plugin "$HOME/.zsh/plugins/ssh-tunnel/ssh-tunnel.plugin.zsh"
+load_plugin "$HOME/.zsh/plugins/zsh-completions/zsh-completions.plugin.zsh"
 load_plugin "$HOME/.zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
 load_plugin "$HOME/.zsh/plugins/zsh-history-substring-search/zsh-history-substring-search.zsh"
 load_plugin "$HOME/.zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh"

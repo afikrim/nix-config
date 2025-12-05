@@ -1,24 +1,3 @@
-[submodule ".zsh/plugins/zsh-nvm"]
-	path = .zsh/plugins/zsh-nvm
-	url = https://github.com/lukechilds/zsh-nvm.git
-[submodule ".zsh/plugins/zsh-completions"]
-	path = .zsh/plugins/zsh-completions
-	url = https://github.com/zsh-users/zsh-completions.git
-[submodule ".zsh/plugins/zsh-autosuggestions"]
-	path = .zsh/plugins/zsh-autosuggestions
-	url = https://github.com/zsh-users/zsh-autosuggestions.git
-[submodule ".zsh/plugins/zsh-history-substring-search"]
-	path = .zsh/plugins/zsh-history-substring-search
-	url = https://github.com/zsh-users/zsh-history-substring-search.git
-[submodule ".zsh/plugins/zsh-syntax-highlighting"]
-	path = .zsh/plugins/zsh-syntax-highlighting
-	url = https://github.com/zsh-users/zsh-syntax-highlighting.git
-[submodule ".zsh/plugins/dotbare"]
-	path = .zsh/plugins/dotbare
-	url = https://github.com/kazhala/dotbare.git
-[submodule ".zsh/plugins/ssh-tunnel"]
-	path = .zsh/plugins/ssh-tunnel
-	url = https://github.com/afikrim/zsh-ssh-tunnel.git
 [submodule ".tmux/oh-my-tmux"]
 	path = .tmux/oh-my-tmux
 	url = https://github.com/gpakosz/.tmux.git

@@ -10,6 +10,15 @@ let
   azizGroup = config.users.users.azizf.group or "users";
   gemHomeRuby336 = "/home/azizf/.gem/ruby/3.3.0";
   gemHomeRuby265 = "/home/azizf/.gem/ruby/2.6.0";
+  zshPlugins = import ../../pkgs/zsh-plugins.nix { inherit (pkgs) fetchFromGitHub; };
+  installZshPlugins =
+    lib.concatStringsSep "\n"
+      (lib.mapAttrsToList
+        (name: path:
+          "        rm -rf /home/azizf/.zsh/plugins/${name}\n"
+          + "        cp -r ${path} /home/azizf/.zsh/plugins/${name}\n"
+          + "        chown -R azizf:${azizGroup} /home/azizf/.zsh/plugins/${name}")
+        zshPlugins);
 in
 {
   imports = [
@@ -162,6 +171,9 @@ in
         rm -rf /home/azizf/.tmux
 
         ${pkgs.rsync}/bin/rsync -a --chown=azizf:${azizGroup} ${dotfiles}/ /home/azizf/
+
+        install -d -m755 -o azizf -g ${azizGroup} /home/azizf/.zsh/plugins
+${installZshPlugins}
       '';
     };
   };
