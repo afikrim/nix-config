@@ -2,11 +2,14 @@
 
 let
   ruby_3_3_6 = pkgs.callPackage ../../pkgs/ruby_3_3_6.nix { };
+  ruby_3_3_6_wrapper = pkgs.callPackage ../../pkgs/ruby_3_3_6_wrapper.nix { inherit ruby_3_3_6; };
   ruby_2_6_5 = pkgs.callPackage ../../pkgs/ruby_2_6_5.nix {
     openssl = pkgs.openssl_1_1;
   };
   ruby_2_6_5_wrapper = pkgs.callPackage ../../pkgs/ruby_2_6_5_wrapper.nix { inherit ruby_2_6_5; };
   azizGroup = config.users.users.azizf.group or "users";
+  gemHomeRuby336 = "/home/azizf/.gem/ruby/3.3.0";
+  gemHomeRuby265 = "/home/azizf/.gem/ruby/2.6.0";
 in
 {
   imports = [
@@ -232,6 +235,7 @@ in
     '' )
 
     ruby_3_3_6
+    ruby_3_3_6_wrapper
     ruby_2_6_5
     ruby_2_6_5_wrapper
     go
@@ -271,8 +275,12 @@ in
 
   environment.variables = {
     NPM_CONFIG_PREFIX = "/home/azizf/.npm-global";
-    GEM_HOME = "/home/azizf/.gem/ruby/3.3.0";
-    GEM_PATH = "/home/azizf/.gem/ruby/3.3.0";
+    GEM_HOME = gemHomeRuby336;
+    GEM_PATH = gemHomeRuby336;
+    GEM_HOME_RUBY_3_3_6 = gemHomeRuby336;
+    GEM_PATH_RUBY_3_3_6 = gemHomeRuby336;
+    GEM_HOME_RUBY_2_6_5 = gemHomeRuby265;
+    GEM_PATH_RUBY_2_6_5 = gemHomeRuby265;
     LD_LIBRARY_PATH = "${pkgs.lib.makeLibraryPath [ pkgs.curl ]}";
   };
 
