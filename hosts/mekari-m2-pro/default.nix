@@ -1,4 +1,4 @@
-{ config, pkgs, lib, ... }:
+{ config, pkgs, lib, dotfiles, ... }:
 
 let
   ruby_3_3_6 = pkgs.callPackage ../../pkgs/ruby_3_3_6.nix { };
@@ -116,10 +116,13 @@ in
     };
   };
 
+  programs.zsh.enable = true;
+
   users.users.azizf = {
     isNormalUser = true;
     description = "Aziz Fikri";
     extraGroups = [ "networkmanager" "wheel" "docker" ];
+    shell = pkgs.zsh;
   };
 
   networking.firewall.allowedTCPPorts = [ 22 ];
@@ -132,12 +135,28 @@ in
     pinentryPackage = pkgs.pinentry-qt;
   };
 
-  system.activationScripts.hyprlandConfig = {
-    deps = [ "users" ];
-    text = ''
-      install -d -m755 -o azizf -g ${azizGroup} /home/azizf/.config/hypr
-      install -m644 -o azizf -g ${azizGroup} ${./hypr/hyprland.conf} /home/azizf/.config/hypr/hyprland.conf
-    '';
+  system.activationScripts = {
+    hyprlandConfig = {
+      deps = [ "users" ];
+      text = ''
+        install -d -m755 -o azizf -g ${azizGroup} /home/azizf/.config/hypr
+        install -m644 -o azizf -g ${azizGroup} ${./hypr/hyprland.conf} /home/azizf/.config/hypr/hyprland.conf
+      '';
+    };
+
+    dotfilesInstall = {
+      deps = [ "users" ];
+      text = ''
+        install -d -m755 -o azizf -g ${azizGroup} /home/azizf/.config
+        rm -rf /home/azizf/.config/alacritty
+        rm -rf /home/azizf/.config/nvim
+        rm -rf /home/azizf/.config/sketchybar
+        rm -rf /home/azizf/.zsh
+        rm -rf /home/azizf/.tmux
+
+        ${pkgs.rsync}/bin/rsync -a --chown=azizf:${azizGroup} ${dotfiles}/ /home/azizf/
+      '';
+    };
   };
 
   ################
@@ -161,6 +180,12 @@ in
 
   environment.systemPackages = with pkgs; [
     vim
+    neovim
+    ripgrep
+    fd
+    lazygit
+    tree-sitter
+    stylua
     curl
     git
     gnupg
@@ -233,6 +258,8 @@ in
 
     playerctl
     brightnessctl
+    zsh
+    zsh-powerlevel10k
   ];
 
   environment.variables = {

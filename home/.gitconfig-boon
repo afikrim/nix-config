@@ -1,0 +1,12 @@
+[user]
+	name = Aziz Fikri Mahmudi
+	email = aziz@getboon.ai
+	signingkey = A8DDA992553304EC
+[diff]
+	tool = nvimdiff
+[core]
+	editor = nvim
+[merge]
+	tool = nvimdiff2
+[commit]
+	gpgsign = true
