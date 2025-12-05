@@ -50,7 +50,7 @@ in
     enable = true;
     settings = {
       default_session = {
-        command = "${pkgs.agreety}/bin/agreety --cmd Hyprland";
+        command = "${pkgs.greetd.greetd}/bin/agreety --cmd Hyprland";
         user = "greeter";
       };
       initial_session = {
