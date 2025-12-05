@@ -2,6 +2,8 @@
 
 let
   ruby_3_3_6 = pkgs.callPackage ../../pkgs/ruby_3_3_6.nix { };
+  ruby_2_6_5 = pkgs.callPackage ../../pkgs/ruby_2_6_5.nix { };
+  ruby_2_6_5_wrapper = pkgs.callPackage ../../pkgs/ruby_2_6_5_wrapper.nix { inherit ruby_2_6_5; };
   azizGroup = config.users.users.azizf.group or "users";
 in
 {
@@ -227,6 +229,8 @@ in
     '' )
 
     ruby_3_3_6
+    ruby_2_6_5
+    ruby_2_6_5_wrapper
     go
     python3
     nodePackages_latest.nodejs
