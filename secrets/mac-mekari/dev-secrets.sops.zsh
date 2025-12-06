@@ -1,15 +1,22 @@
-# This file is managed by sops. Replace the placeholders, then re-encrypt with:
-#   export SOPS_AGE_KEY_FILE=~/.config/sops/age/keys.txt
-#   sops --encrypt --in-place secrets/mac-mekari/dev-secrets.sops.zsh
-
-export MEKARI_GITHUB_TOKEN="__SET_ME__"
-export MEKARI_BRAVE_API_KEY="__SET_ME__"
-export MEKARI_TAVILY_API_KEY="__SET_ME__"
-export MEKARI_CONFLUENCE_URL="https://jurnal.atlassian.net"
-export MEKARI_CONFLUENCE_USERNAME="aziz.fikri@mekari.com"
-export MEKARI_CONFLUENCE_API_TOKEN="__SET_ME__"
-export MEKARI_JIRA_URL="https://jurnal.atlassian.net"
-export MEKARI_JIRA_USERNAME="aziz.fikri@mekari.com"
-export MEKARI_JIRA_API_TOKEN="__SET_ME__"
-export MEKARI_BITBUCKET_USERNAME="afikrim_mkr"
-export MEKARI_BITBUCKET_APP_PASSWORD="__SET_ME__"
+{
+	"data": "ENC[AES256_GCM,data:EkiCyZQ6A32Mcn9BQPTdY3EbpbE+o6B3Ot6FZ5LdmFQlg9S+77PTYfwoPJ0cMfbSD4yOSLfn68s73gimTgImp6TKbHaQ0Oj3Af3HmyYyJnTB2N1ZuAWl7ke0pJrdMo/ZpVWwMM9MGaIWRjbQfDXKsavM3gfYxsaaKP1Yo
+Wa0+jT3oWO50m/IqVhL/lU8wadbknE69T/jFw/y/AGbhHmKYnNEDZfF533n3ZQ4AMRWhT+ntWYFDsm42zcplJf8eYbuBplCiqSlXu1bdUFte1Yrds7HOQ8i9tp2LGiu8E8uUCpA60rKx8T4xkxGcjxYOknv/9zE8b4xGYM8o9brdxGBSA8T84lv57lxGiSW0m3M
+jq5nKDp0mXBtQSFL7Eq0lQkffTnJmx0Y+FGLDcy3Fti73aWZLJ7k/8e5sfAqeclUmgUFeSrFJSZX0J/+rzRkVTZOWjeSyzcOI0NtTk06Oh5WiPzyLB6Cx0ZkIEF9mkkq08W8BKluc2HQv70C6bprN/PLh2CDnSJxw85EMy4wiYa9/Bu0wmL4U/H1vfNekjMCka/
+D1/iNld9NkjSSw9Oct2iwnzaV1Amn6U53727MrM5UMygOJdwIjHJqGAxjT5BSgfKgYLrdfp96n094u+7Yx7F1pdyPtMf9a2nuyQ7m2Vti5hB/j94auNk38N0yL7YMerCL1KrgzsBF0cyJiQJqSwfi9oNa4EgeqofL59tt2tzyI1bOvB8QPE/tYB/1P7KJr1ddAM
+XkuNvHI+PkplydPYX41V28lWpXiKBNnVERzJzPftL3seZ4ooY4Y+PGa/9fwuIs7WymqUMRM6NNQM8DuWB0T2QYK7X/0yO6aE52qkZstjWNxtiHXHkQGY3Cf/UerWcTgb1halHpFSQa/LdwFhoS7NNkGzEfFtmkqhrDoXlpbxT3d2uKgykF4zb77eoeojK1M5Fnt
+IQVOwaOzhx93eF7F+ogPmlalnTc29umzdkuUjh3MD77NA==,iv:8xqc/4iiebPg3IxgVp/Dt0SEXSXqj+R/ppUh6DhW3K4=,tag:Un6hnYpcTYg4jBLy1TZSLw==,type:str]",
+	"sops": {
+		"age": [
+			{
+				"recipient": "age1xewgjv9042k8d89pwnvgttthjjjkxq7vjqnww4yvp60jxyqkvajq8arseg",
+				"enc": "-----BEGIN AGE ENCRYPTED FILE-----\nYWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSAwb3ltYWgvMlN1UzA2Sldj\nVTF6OXdCcWpUVlNlUHY0azd1NXZadnBvUW5ZClpMbWVlV0gyM2RreVBVUnllTTJZ\nTUxBL1dQUjlrUXU
+2V0Z2L3dxVUN3UGcKLS0tIGwyL2p4UjNoQ0ducXpraW5ncS9I\nTlJyczRlMzlTVGcrNzNFSWQ5NXB4NWsK7RO63nJ2zvSrLgJV/mDGYor55kO107Ih\ntWuhBACbe4bxL0Cu29Qvqkj7ihCsDTDERCb9yIUrAR3zMcL4pNr+Ng==\n-----END AGE ENCRYPT
+ED FILE-----\n"
+			}
+		],
+		"lastmodified": "2025-12-06T10:17:24Z",
+		"mac": "ENC[AES256_GCM,data:7WknutMP2R0+KZfyij3WdVtz3qB74emUwV49GYVdSqWvfKinBwVtZRRPzs7/vwCBxmTvuHqygB1SKCEas3PiWpT04n2mbpt1HNwGaUAvaiIBlsovEzFS+U3HRyajhEcfeXbXFBSupOr6EzZSNqGyft+gBgksZ9S8DLQJn
+cqB3Qk=,iv:SM5lPf+d/QxpRx3Ua7NMKDCCUriwBXTsklwaZGkJPY8=,tag:RA5ThE+Iv7iGP5Q93yxz6w==,type:str]",
+		"version": "3.11.0"
+	}
+}

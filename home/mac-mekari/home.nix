@@ -54,7 +54,10 @@ in
 
   xdg.configFile = {
     "alacritty".source = "${dotfiles}/.config/alacritty";
-    "nvim".source = "${dotfiles}/.config/nvim";
+    "nvim" = {
+      source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nix-config/home/.config/nvim";
+      recursive = true;
+    };
     "dev/secrets.example.zsh".source = "${dotfiles}/.config/dev/secrets.example.zsh";
   };
 
@@ -64,6 +67,7 @@ in
     format = "binary";
     path = "${config.home.homeDirectory}/.config/dev/secrets.zsh";
   };
+  sops.age.keyFile = lib.mkIf secretsExists "${config.home.homeDirectory}/.config/sops/age/keys.txt";
 
   home.activation.developmentDirs = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     mkdir -p "$HOME/Development/mekari" \
