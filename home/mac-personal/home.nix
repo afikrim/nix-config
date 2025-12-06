@@ -20,7 +20,7 @@ in
   home = {
     username = "azizf";
     homeDirectory = "/Users/azizf";
-    stateVersion = "24.11";
+    stateVersion = "25.11";
   };
 
   programs.home-manager.enable = true;
