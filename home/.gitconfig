@@ -1,73 +1,25 @@
-# This is Git's per-user configuration file.
-; [user]
-# Please adapt and uncomment the following lines:
-#	name = Aziz Fikri
-#	email = azizf@Azizs-MacBook-Air.local
-	; name = Aziz Fikri
-	; email = afikrim10@gmail.com
-[includeIf "gitdir:~/Development/Amartha/"]
-  path = ~/.gitconfig-amartha
-[includeIf "gitdir:~/Development/Afikrim/"]
-  path = ~/.gitconfig-personal
-[includeIf "gitdir:~/Code/Afikrim/"]
-  path = ~/.gitconfig-personal
-[includeIf "gitdir:~/Development/Freelance/"]
-  path = ~/.gitconfig-freelance
-[includeIf "gitdir:~/Development/Deliv/"]
-  path = ~/.gitconfig-deliv
-[includeIf "gitdir:~/Code/Mekari/"]
+[includeIf "gitdir:~/Development/mekari/"]
   path = ~/.gitconfig-mekari
-[includeIf "gitdir:~/Code/Boon/"]
+[includeIf "gitdir:~/Development/personal/"]
+  path = ~/.gitconfig-personal
+[includeIf "gitdir:~/Development/getboon/"]
   path = ~/.gitconfig-boon
+[includeIf "gitdir:~/Development/azifex/"]
+  path = ~/.gitconfig-personal
+[includeIf "gitdir:~/Development/afikrim/"]
+  path = ~/.gitconfig-personal
 
-
-[url "git@github.com:afikrim"]
-	insteadOf = https://github.com/afikrim
-# [url "ssh://git@gitlab.com:"]
-# 	insteadOf = https://gitlab.com/
-# [url "ssh://git@bitbucket.org:"]
-# 	insteadOf = https://bitbucket.org/
-[url "git@amartha.bitbucket.org:Amartha/"]
-	insteadOf = https://bitbucket.org/Amartha/
-[url "git@amartha.bitbucket.org:Amartha/"]
-	insteadOf = ssh://git@bitbucket.org:Amartha/
-[url "git@amartha.bitbucket.org:Amartha/"]
-	insteadOf = git@bitbucket.org:Amartha/
-[url "git@amartha.bitbucket.org:afikrim_a/"]
-	insteadOf = https://bitbucket.org/afikrim_a/
-[url "git@amartha.bitbucket.org:afikrim_a/"]
-	insteadOf = ssh://git@bitbucket.org:afikrim_a/
-[url "git@amartha.bitbucket.org:afikrim_a/"]
-	insteadOf = git@bitbucket.org:afikrim_a/
-[url "git@bitbucket.org:jurnal/"]
-	insteadOf = https://bitbucket.org/jurnal/
-[url "git@bitbucket.org:jurnal/"]
-	insteadOf = ssh://git@bitbucket.org:jurnal/
-[url "git@bitbucket.org:jurnal/"]
-	insteadOf = git@bitbucket.org:jurnal/
-[url "git@bitbucket.org:afikrim_mkr/"]
-	insteadOf = https://bitbucket.org/afikrim_mkr/
-[url "git@bitbucket.org:afikrim_mkr/"]
-	insteadOf = ssh://git@bitbucket.org:afikrim_mkr/
-[url "git@bitbucket.org:afikrim_mkr/"]
-	insteadOf = git@bitbucket.org:afikrim_mkr/
+[url "git@github.com"]
+	insteadOf = https://github.com
 [user]
 	name = Aziz Fikri Mahmudi
 	email = afikrim10@gmail.com
+
 [diff]
 	tool = nvimdiff
 [core]
 	editor = nvim
-	excludesfile = /Users/mekari/.gitignore_global
 [merge]
 	tool = nvimdiff2
-[commit]
-	gpgsign = false
 [gpg]
 	program = gpg
-[difftool "sourcetree"]
-	cmd = opendiff \"$LOCAL\" \"$REMOTE\"
-	path = 
-[mergetool "sourcetree"]
-	cmd = /Applications/Sourcetree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
-	trustExitCode = true

@@ -1,6 +1,0 @@
-[user]
-  name = Aziz Fikri
-  email = afikrim10@deliv.co.id
-
-[url "ssh://git-codecommit.ap-southeast-1.amazonaws.com/"]
-	insteadOf = https://git-codecommit.ap-southeast-1.amazonaws.com/

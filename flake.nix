@@ -11,9 +11,13 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    sops-nix = {
+      url = "github:Mic92/sops-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { self, nixpkgs, nix-darwin, home-manager }:
+  outputs = { self, nixpkgs, nix-darwin, home-manager, sops-nix }:
     let
       lib = nixpkgs.lib;
       linuxSystem = "aarch64-linux";
@@ -23,6 +27,15 @@
         config.allowUnfree = true;
       };
       dotfiles = lib.cleanSource ./home;
+      repoRoot = ./.;
+      mkDarwinHost = hostModule:
+        nix-darwin.lib.darwinSystem {
+          system = darwinSystem;
+          specialArgs = { inherit dotfiles; };
+          modules = [
+            hostModule
+          ];
+        };
     in {
       nixosConfigurations = {
         personal = lib.nixosSystem {
@@ -35,21 +48,25 @@
       };
 
       darwinConfigurations = {
-        mekari-m2-pro = nix-darwin.lib.darwinSystem {
-          system = darwinSystem;
-          specialArgs = { inherit dotfiles; };
-          modules = [
-            ./hosts/mekari-m2-pro/darwin.nix
-          ];
-        };
+        mac-mekari = mkDarwinHost ./hosts/mac-mekari/default.nix;
+        mac-personal = mkDarwinHost ./hosts/mac-personal/default.nix;
       };
 
       homeConfigurations = {
-        mekari = home-manager.lib.homeManagerConfiguration {
+        mac-mekari = home-manager.lib.homeManagerConfiguration {
           pkgs = darwinPkgs;
-          extraSpecialArgs = { inherit dotfiles; };
+          extraSpecialArgs = { inherit dotfiles repoRoot; };
           modules = [
-            ./home/darwin-home.nix
+            sops-nix.homeManagerModules.sops
+            ./home/mac-mekari/home.nix
+          ];
+        };
+        mac-personal = home-manager.lib.homeManagerConfiguration {
+          pkgs = darwinPkgs;
+          extraSpecialArgs = { inherit dotfiles repoRoot; };
+          modules = [
+            sops-nix.homeManagerModules.sops
+            ./home/mac-personal/home.nix
           ];
         };
       };

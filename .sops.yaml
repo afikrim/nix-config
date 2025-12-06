@@ -1,0 +1,10 @@
+# Update the age recipient below with your own public key (from `age-keygen -y`).
+# Example:
+#   creation_rules:
+#     - path_regex: secrets/.*\.sops\.zsh$
+#       age: ["age1yourpublickeyhere"]
+
+creation_rules:
+  - path_regex: secrets/.*\.sops\.zsh$
+    age:
+      - "age1REPLACE_ME_WITH_YOUR_PUBLIC_KEY"

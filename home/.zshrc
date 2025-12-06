@@ -166,10 +166,10 @@ export LESS_TERMCAP_ue=$'\E[0m'
 export LESS_TERMCAP_us=$'\E[01;36m'
 export LESS=-r
 export DOTBARE_DIR="$HOME/.dotfiles"
-export MEKARI_DEV_DIR="$HOME/Code/Mekari"
-export AFIKRIM_DEV_DIR="$HOME/Code/Afikrim"
-export AZIFEX_DEV_DIR="$HOME/Code/Azifex"
-export BOONAI_DEV_DIR="$HOME/Code/BoonAi"
+export MEKARI_DEV_DIR="$HOME/Development/mekari"
+export AFIKRIM_DEV_DIR="$HOME/Development/afikrim"
+export AZIFEX_DEV_DIR="$HOME/Development/azifex"
+export GETBOON_DEV_DIR="$HOME/Development/getboon"
 
 # Word separators
 WORDCHARS=${WORDCHARS//\/[&.;]}
@@ -262,23 +262,12 @@ __set_tmux_tab_name() {
   tmux rename-window "${ticket}/${short}"
 }
 
-__git_worktree() {
-  local branch=$1
-  local base=${2:-main}   # default base branch = main
-  local dir="../$branch"
-
-  if [[ -z "$branch" ]]; then
-    echo "Usage: gtw <branch-name> [base-branch]"
-    return 1
-  fi
-
-  git worktree add "$dir" -b "$branch" "$base" || return 1
-  cd "$dir" || return 1
-  __set_tmux_tab_name "$branch"
-}
-
-source ~/.dev-boon.plugin.zsh
-source ~/.dev-mekari.plugin.zsh
+if [[ -d "$HOME/.zsh/dev" ]]; then
+  for plugin in "$HOME/.zsh/dev/"*.zsh; do
+    [[ -e "$plugin" ]] || continue
+    source "$plugin"
+  done
+fi
 
 # Tmux shortcuts
 alias tx='tmux'
@@ -298,11 +287,12 @@ alias theme-dark='export CURRENT_THEME=dark && theme-switch'
 alias theme-auto='unset CURRENT_THEME && theme-switch'
 
 # Dev alias
-alias dev='cd ~/Code'
-alias dev-mekari='cd ~/Code/Mekari'
-alias dev-afikrim='cd ~/Code/Afikrim'
-alias dev-azifex='cd ~/Code/Azifex'
-alias dev-boonai='cd ~/Code/BoonAi'
+alias dev='cd ~/Development'
+alias dev-mekari='cd ~/Development/mekari'
+alias dev-afikrim='cd ~/Development/afikrim'
+alias dev-azifex='cd ~/Development/azifex'
+alias dev-getboon='cd ~/Development/getboon'
+alias dev-boonai='dev-getboon'
 
 alias clpass='claude --dangerously-skip-permissions'
 alias cxpass='codex --dangerously-bypass-approvals-and-sandbox'

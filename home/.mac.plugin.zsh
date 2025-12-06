@@ -8,6 +8,10 @@ export PATH="$LOCAL_BIN:$PATH"
 export PATH="/opt/homebrew/opt/openjdk/bin:$PATH"
 export PATH="$PATH:$(go env GOPATH)/bin"
 
+if [[ -f "$HOME/.config/dev/secrets.zsh" ]]; then
+  source "$HOME/.config/dev/secrets.zsh"
+fi
+
 export GOOGLE_CLOUD_SDK_ROOT="/opt/homebrew/Caskroom/google-cloud-sdk/latest/google-cloud-sdk"
 if [ -d "{$GOOGLE_CLOUD_SDK_ROOT}" ]; then
   source "$GOOGLE_CLOUD_SDK_ROOT/completion.zsh.inc"

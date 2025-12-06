@@ -6,8 +6,8 @@
 
   nix.enable = false;
 
-  networking.hostName = "mekari-m2-pro";
-  networking.computerName = "mekari-m2-pro";
+  networking.hostName = "mac-mekari";
+  networking.computerName = "mac-mekari";
 
   users.users.mekari = {
     name = "mekari";

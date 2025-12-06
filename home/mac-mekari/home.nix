@@ -1,7 +1,7 @@
-{ config, pkgs, lib, dotfiles, ... }:
+{ config, pkgs, lib, dotfiles, repoRoot, ... }:
 
 let
-  zshPlugins = import ../pkgs/zsh-plugins.nix { inherit (pkgs) fetchFromGitHub; };
+  zshPlugins = import ../../pkgs/zsh-plugins.nix { inherit (pkgs) fetchFromGitHub; };
   pluginFiles =
     lib.mapAttrs'
       (name: path: {
@@ -12,6 +12,9 @@ let
         };
       })
       zshPlugins;
+  secretsFile = "${toString repoRoot}/secrets/mac-mekari/dev-secrets.sops.zsh";
+  secretsExists = builtins.pathExists secretsFile;
+  secretsPath = if secretsExists then builtins.path { path = secretsFile; name = "mac-mekari-dev-secrets"; } else null;
 in
 {
   home = {
@@ -22,24 +25,24 @@ in
 
   programs.home-manager.enable = true;
 
+  home.packages = with pkgs; [
+    alacritty
+    brave
+    neovim
+    vscode
+  ];
+
   home.file =
     {
       ".zshrc".source = "${dotfiles}/.zshrc";
       ".mac.plugin.zsh".source = "${dotfiles}/.mac.plugin.zsh";
       ".linux.plugin.zsh".source = "${dotfiles}/.linux.plugin.zsh";
-      ".dev-boon.plugin.zsh".source = "${dotfiles}/.dev-boon.plugin.zsh";
-      ".dev-mekari.plugin.zsh".source = "${dotfiles}/.dev-mekari.plugin.zsh";
       ".p10k.zsh".source = "${dotfiles}/.p10k.zsh";
       ".p10k-light.zsh".source = "${dotfiles}/.p10k-light.zsh";
-      ".skhdrc".source = "${dotfiles}/.skhdrc";
       ".tmux.conf".source = "${dotfiles}/.tmux.conf";
-      ".yabairc".source = "${dotfiles}/.yabairc";
       ".gitmodules".source = "${dotfiles}/.gitmodules";
       ".gitconfig".source = "${dotfiles}/.gitconfig";
-      ".gitconfig-amartha".source = "${dotfiles}/.gitconfig-amartha";
       ".gitconfig-boon".source = "${dotfiles}/.gitconfig-boon";
-      ".gitconfig-deliv".source = "${dotfiles}/.gitconfig-deliv";
-      ".gitconfig-freelance".source = "${dotfiles}/.gitconfig-freelance";
       ".gitconfig-mekari".source = "${dotfiles}/.gitconfig-mekari";
       ".gitconfig-personal".source = "${dotfiles}/.gitconfig-personal";
       ".zsh" = {
@@ -52,6 +55,18 @@ in
   xdg.configFile = {
     "alacritty".source = "${dotfiles}/.config/alacritty";
     "nvim".source = "${dotfiles}/.config/nvim";
-    "sketchybar".source = "${dotfiles}/.config/sketchybar";
+    "dev/secrets.example.zsh".source = "${dotfiles}/.config/dev/secrets.example.zsh";
   };
+
+  sops.defaultSopsFile = lib.mkIf secretsExists secretsPath;
+  sops.secrets."dev-secrets" = lib.mkIf secretsExists {
+    sopsFile = secretsPath;
+    format = "binary";
+    path = "${config.home.homeDirectory}/.config/dev/secrets.zsh";
+  };
+
+  home.activation.developmentDirs = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    mkdir -p "$HOME/Development/mekari" \
+             "$HOME/Development/personal"
+  '';
 }
