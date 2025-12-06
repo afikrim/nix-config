@@ -27,6 +27,7 @@
   ];
 
   environment.systemPackages = with pkgs; [
+    age
     coreutils
     curl
     fd
