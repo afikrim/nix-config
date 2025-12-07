@@ -65,7 +65,7 @@ update_alacritty_theme() {
     theme_name=$LIGHT_THEME_NAME
   fi
 
-  target="$ALACRITTY_THEMES_DIR/themes/${theme_name}.toml"
+  target="$ALACRITTY_THEMES_DIR/${theme_name}.toml"
 
   if [[ ! -f "$target" ]]; then
     echo "Alacritty theme $target not found"

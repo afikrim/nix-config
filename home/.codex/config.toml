@@ -1,0 +1,38 @@
+model = "gpt-5.1-codex"
+
+notify = ["/bin/bash", "/Users/mekari/.codex/notify.sh"]
+model_reasoning_effort = "medium"
+
+[tui]
+notifications = [ "agent-turn-complete", "approval-requested" ]
+
+[mcp_servers.context7]
+command = "npx"
+args = ["-y", "@upstash/context7-mcp"]
+env_vars = ["TAVILY_API_KEY"]
+
+[mcp_servers.omnisearch]
+command = "npx"
+args = ["-y", "mcp-omnisearch"]
+env_vars = ["TAVILY_API_KEY", "BRAVE_API_KEY"]
+
+[mcp_servers.github]
+command = "npx"
+args = ["-y", "@modelcontextprotocol/server-github"]
+env_vars = ["GITHUB_PERSONAL_ACCESS_TOKEN"]
+
+# Uncomment to add extra servers
+# [mcp_servers.bitbucket]
+# command = "npx"
+# args = ["-y", "@aashari/mcp-server-atlassian-bitbucket"]
+# env_vars = ["ATLASSIAN_BITBUCKET_USERNAME", "ATLASSIAN_BITBUCKET_APP_PASSWORD"]
+
+[projects."/Users/mekari/Code/Azifex/mindscape/mindscape-alpha"]
+trust_level = "trusted"
+
+[projects."/Users/mekari/Code/Mekari/accounting_service"]
+trust_level = "trusted"
+
+[notice]
+hide_full_access_warning = true
+"hide_gpt-5.1-codex-max_migration_prompt" = true

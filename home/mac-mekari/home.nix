@@ -52,6 +52,12 @@ in
       ".gitconfig-boon".source = "${dotfiles}/.gitconfig-boon";
       ".gitconfig-mekari".source = "${dotfiles}/.gitconfig-mekari";
       ".gitconfig-personal".source = "${dotfiles}/.gitconfig-personal";
+      ".claude/settings.json".source = "${dotfiles}/.claude/settings.json";
+      ".claude/mcp.json".source = "${dotfiles}/.claude/mcp.json";
+      ".claude/commands/ultrathink" = {
+        source = "${dotfiles}/.claude/commands/ultrathink";
+        recursive = true;
+      };
       ".config/alacritty/alacritty.toml".source = "${dotfiles}/.config/alacritty/alacritty.toml";
       ".config/alacritty/alacritty.toml.bak".source = "${dotfiles}/.config/alacritty/alacritty.toml.bak";
       ".config/scripts/theme-switcher.sh" = {
@@ -97,7 +103,16 @@ in
       fi
       mkdir -p "$target"
     '';
-    ensureAlacrittyThemeLink = lib.hm.dag.entryAfter [ "prepareAlacrittyDir" ] ''
+    cleanAlacrittyThemes = lib.hm.dag.entryAfter [ "prepareAlacrittyDir" ] ''
+      target="$HOME/.config/alacritty/themes"
+      if [ -d "$target" ] && [ ! -L "$target" ]; then
+        rm -rf "$target"
+      fi
+    '';
+    ensureAiAppDirs = lib.hm.dag.entryAfter [ "cleanAlacrittyThemes" ] ''
+      mkdir -p "$HOME/.codex" "$HOME/.copilot" "$HOME/.claude/commands"
+    '';
+    ensureAlacrittyThemeLink = lib.hm.dag.entryAfter [ "cleanAlacrittyThemes" ] ''
       theme_link="$HOME/.config/alacritty/current-theme.toml"
       default_theme="${defaultAlacrittyTheme}"
       if [ ! -L "$theme_link" ] && [ ! -f "$theme_link" ]; then
