@@ -15,6 +15,13 @@ let
   secretsFile = "${toString repoRoot}/secrets/mac-personal/dev-secrets.sops.zsh";
   secretsExists = builtins.pathExists secretsFile;
   secretsPath = if secretsExists then builtins.path { path = secretsFile; name = "mac-personal-dev-secrets"; } else null;
+  alacrittyThemes = pkgs.fetchFromGitHub {
+    owner = "alacritty";
+    repo = "alacritty-theme";
+    rev = "f82c742634b5e840731dd7c609e95231917681a5";
+    hash = "sha256-Jcxl1/fEWXPXVdJxRonXJpJx/5iQvTHfZqvd18gjvGk=";
+  };
+  defaultAlacrittyTheme = "${alacrittyThemes}/themes/one_light.toml";
 in
 {
   home = {
@@ -45,6 +52,16 @@ in
       ".gitconfig-boon".source = "${dotfiles}/.gitconfig-boon";
       ".gitconfig-mekari".source = "${dotfiles}/.gitconfig-mekari";
       ".gitconfig-personal".source = "${dotfiles}/.gitconfig-personal";
+      ".config/alacritty/alacritty.toml".source = "${dotfiles}/.config/alacritty/alacritty.toml";
+      ".config/alacritty/alacritty.toml.bak".source = "${dotfiles}/.config/alacritty/alacritty.toml.bak";
+      ".config/scripts/theme-switcher.sh" = {
+        source = "${dotfiles}/.config/scripts/theme-switcher.sh";
+        executable = true;
+      };
+      ".config/alacritty/themes" = {
+        source = "${alacrittyThemes}/themes";
+        recursive = true;
+      };
       ".zsh" = {
         source = "${dotfiles}/.zsh";
         recursive = true;
@@ -53,7 +70,6 @@ in
     // pluginFiles;
 
   xdg.configFile = {
-    "alacritty".source = "${dotfiles}/.config/alacritty";
     "nvim" = {
       source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nix-config/home/.config/nvim";
       recursive = true;
@@ -69,10 +85,26 @@ in
   };
   sops.age.keyFile = lib.mkIf secretsExists "${config.home.homeDirectory}/.config/sops/age/keys.txt";
 
-  home.activation.developmentDirs = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-    mkdir -p "$HOME/Development/mekari" \
-             "$HOME/Development/getboon" \
-             "$HOME/Development/azifex" \
-             "$HOME/Development/afikrim"
-  '';
+  home.activation = {
+    developmentDirs = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+      mkdir -p "$HOME/Development/mekari" \
+               "$HOME/Development/getboon" \
+               "$HOME/Development/azifex" \
+               "$HOME/Development/afikrim"
+    '';
+    prepareAlacrittyDir = lib.hm.dag.entryAfter [ "developmentDirs" ] ''
+      target="$HOME/.config/alacritty"
+      if [ -L "$target" ]; then
+        rm "$target"
+      fi
+      mkdir -p "$target"
+    '';
+    ensureAlacrittyThemeLink = lib.hm.dag.entryAfter [ "prepareAlacrittyDir" ] ''
+      theme_link="$HOME/.config/alacritty/current-theme.toml"
+      default_theme="${defaultAlacrittyTheme}"
+      if [ ! -L "$theme_link" ] && [ ! -f "$theme_link" ]; then
+        ln -sf "$default_theme" "$theme_link"
+      fi
+    '';
+  };
 }

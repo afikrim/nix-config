@@ -22,9 +22,27 @@
       lib = nixpkgs.lib;
       linuxSystem = "aarch64-linux";
       darwinSystem = "aarch64-darwin";
+      braveOverlay = final: prev:
+        let
+          newVersion = "1.85.111";
+        in
+        if prev.stdenv.hostPlatform.system == "aarch64-darwin" then
+          {
+            brave = prev.brave.overrideAttrs (_: {
+              version = newVersion;
+              src = prev.fetchzip {
+                url = "https://github.com/brave/brave-browser/releases/download/v${newVersion}/brave-v${newVersion}-darwin-arm64.zip";
+                hash = "sha256-4U9nKCxrrLKE7ZRUsyi4ECuzDGzevm7eIU2jGUyUjN8=";
+              };
+            });
+          }
+        else
+          { };
+      overlays = [ braveOverlay ];
       darwinPkgs = import nixpkgs {
         system = darwinSystem;
         config.allowUnfree = true;
+        inherit overlays;
       };
       dotfiles = lib.cleanSource ./home;
       repoRoot = ./.;
@@ -33,6 +51,7 @@
           system = darwinSystem;
           specialArgs = { inherit dotfiles; };
           modules = [
+            { nixpkgs.overlays = overlays; }
             hostModule
           ];
         };
@@ -42,6 +61,7 @@
           system = linuxSystem;
           specialArgs = { inherit dotfiles; };
           modules = [
+            { nixpkgs.overlays = overlays; }
             ./hosts/personal/default.nix
           ];
         };
