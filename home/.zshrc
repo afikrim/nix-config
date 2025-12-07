@@ -79,15 +79,6 @@ if command -v pyenv >/dev/null 2>&1; then
     eval "$(pyenv init - zsh)"
 fi
 
-# nvm setup (macOS only)
-if [[ "$OSTYPE" == "darwin"* ]]; then
-    export NVM_DIR="$HOME/.nvm"
-    if [[ -d "$NVM_DIR" && -f "$NVM_DIR/nvm.sh" ]]; then
-        source "$NVM_DIR/nvm.sh"
-        export PATH="$NVM_DIR/versions/node/$(nvm version)/bin:$PATH"
-    fi
-fi
-
 export ANDROID_HOME=~/Library/Android/sdk
 export PATH=$PATH:$ANDROID_HOME/tools:$ANDROID_HOME/tools/bin:$ANDROID_HOME/platform-tools
 

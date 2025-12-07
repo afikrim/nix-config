@@ -22,6 +22,12 @@ let
     hash = "sha256-Jcxl1/fEWXPXVdJxRonXJpJx/5iQvTHfZqvd18gjvGk=";
   };
   defaultAlacrittyTheme = "${alacrittyThemes}/themes/one_light.toml";
+  devToolPackages = [
+    pkgs.nodejs_24
+    pkgs.pnpm
+    pkgs.bun
+    pkgs.flutter
+  ];
 in
 {
   home = {
@@ -32,12 +38,14 @@ in
 
   programs.home-manager.enable = true;
 
-  home.packages = with pkgs; [
-    alacritty
-    brave
-    neovim
-    vscode
-  ];
+  home.packages =
+    (with pkgs; [
+      alacritty
+      brave
+      neovim
+      vscode
+    ])
+    ++ devToolPackages;
 
   home.file =
     {
