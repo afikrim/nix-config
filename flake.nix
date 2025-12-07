@@ -81,7 +81,6 @@
             ./modules/claude.nix
             ./modules/codex.nix
             ./modules/copilot.nix
-            ./modules/dev-clis.nix
             ./home/mac-mekari/home.nix
           ];
         };
@@ -93,7 +92,6 @@
             ./modules/claude.nix
             ./modules/codex.nix
             ./modules/copilot.nix
-            ./modules/dev-clis.nix
             ./home/mac-personal/home.nix
           ];
         };

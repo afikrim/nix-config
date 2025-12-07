@@ -22,12 +22,14 @@ let
     hash = "sha256-Jcxl1/fEWXPXVdJxRonXJpJx/5iQvTHfZqvd18gjvGk=";
   };
   defaultAlacrittyTheme = "${alacrittyThemes}/themes/one_light.toml";
-  devToolPackages = [
-    pkgs.nodejs_24
-    pkgs.pnpm
-    pkgs.bun
-    pkgs.flutter
-  ];
+  devToolPackages =
+    (with pkgs; [
+      nodejs_24
+      pnpm
+      bun
+      flutter
+      copilot-cli
+    ]);
 in
 {
   home = {

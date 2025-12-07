@@ -1,13 +1,12 @@
-{ config, lib, pkgs, ... }:
+{ config, pkgs, ... }:
 
 let
-  toml = pkgs.formats.toml { };
   notifyScript = ''
     #!/usr/bin/env bash
 
     terminal-notifier -title 'Codex' -message "Job finished in $(basename "$(pwd)")" -sound default
   '';
-  codexConfig = {
+  codexSettings = {
     model = "gpt-5.1-codex";
     model_reasoning_effort = "medium";
     notify = [
@@ -49,11 +48,13 @@ let
   };
 in
 {
+  programs.codex = {
+    enable = true;
+    settings = codexSettings;
+  };
+
   home.file.".codex/notify.sh" = {
     text = notifyScript;
     executable = true;
   };
-
-  home.file.".codex/config.toml".source =
-    toml.generate "codex-config" codexConfig;
 }
