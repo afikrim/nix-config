@@ -39,3 +39,6 @@ export CPPFLAGS="-I/opt/homebrew/opt/mysql-client/include"
 
 export PKG_CONFIG_PATH="/opt/homebrew/opt/mysql-client/lib/pkgconfig"
 export PATH="/opt/homebrew/bin:$PATH"
+
+# finally append the Nix profile bin so it stays in PATH but after other toolchains
+export PATH="$PATH:$HOME/.nix-profile/bin"

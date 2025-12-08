@@ -12,6 +12,21 @@ let
         };
       })
       zshPlugins;
+  tmuxPlugins = import ../../pkgs/tmux-plugins.nix { inherit pkgs; };
+  tmuxPluginFiles =
+    lib.mapAttrs'
+      (name: path: {
+        name =
+          if name == "oh-my-tmux" then
+            ".tmux/oh-my-tmux"
+          else
+            ".tmux/plugins/${name}";
+        value = {
+          source = path;
+          recursive = true;
+        };
+      })
+      tmuxPlugins;
   secretsFile = "${toString repoRoot}/secrets/mac-personal/dev-secrets.sops.zsh";
   secretsExists = builtins.pathExists secretsFile;
   secretsPath = if secretsExists then builtins.path { path = secretsFile; name = "mac-personal-dev-secrets"; } else null;
@@ -22,6 +37,7 @@ let
     hash = "sha256-Jcxl1/fEWXPXVdJxRonXJpJx/5iQvTHfZqvd18gjvGk=";
   };
   defaultAlacrittyTheme = "${alacrittyThemes}/themes/one_light.toml";
+  terminalNotifier = pkgs.callPackage ../../pkgs/terminal-notifier-xcode.nix { };
   devToolPackages =
     (with pkgs; [
       nodejs_24
@@ -47,7 +63,8 @@ in
       neovim
       vscode
     ])
-    ++ devToolPackages;
+    ++ devToolPackages
+    ++ [ terminalNotifier ];
 
   home.file =
     {
@@ -85,7 +102,8 @@ in
         recursive = true;
       };
     }
-    // pluginFiles;
+    // pluginFiles
+    // tmuxPluginFiles;
 
   xdg.configFile = {
     "nvim" = {

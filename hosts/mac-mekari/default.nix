@@ -31,6 +31,7 @@
     sops
     coreutils
     curl
+    bashInteractive
     fd
     ffmpeg
     git
