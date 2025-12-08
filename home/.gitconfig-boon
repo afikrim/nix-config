@@ -1,7 +1,7 @@
 [user]
 	name = Aziz Fikri Mahmudi
 	email = aziz@getboon.ai
-	signingkey = A8DDA992553304EC
+	signingkey = 130C088F6ACD0C08
 [diff]
 	tool = nvimdiff
 [core]

@@ -30,6 +30,9 @@ let
   secretsFile = "${toString repoRoot}/secrets/mac-personal/dev-secrets.sops.zsh";
   secretsExists = builtins.pathExists secretsFile;
   secretsPath = if secretsExists then builtins.path { path = secretsFile; name = "mac-personal-dev-secrets"; } else null;
+  gpgSecretsFile = "${toString repoRoot}/secrets/mac-personal/gpg-getboon.sops.asc";
+  gpgSecretsExists = builtins.pathExists gpgSecretsFile;
+  gpgSecretsPath = if gpgSecretsExists then builtins.path { path = gpgSecretsFile; name = "mac-personal-gpg-getboon"; } else null;
   alacrittyThemes = pkgs.fetchFromGitHub {
     owner = "alacritty";
     repo = "alacritty-theme";
@@ -45,6 +48,7 @@ let
       bun
       flutter
       copilot-cli
+      google-cloud-sdk
     ]);
 in
 {
@@ -119,6 +123,11 @@ in
     format = "binary";
     path = "${config.home.homeDirectory}/.config/dev/secrets.zsh";
   };
+  sops.secrets."gpg-getboon" = lib.mkIf gpgSecretsExists {
+    sopsFile = gpgSecretsPath;
+    format = "binary";
+    path = "${config.home.homeDirectory}/.gnupg/getboon-private.asc";
+  };
   sops.age.keyFile = lib.mkIf secretsExists "${config.home.homeDirectory}/.config/sops/age/keys.txt";
 
   home.activation = {
@@ -149,6 +158,15 @@ in
       default_theme="${defaultAlacrittyTheme}"
       if [ ! -L "$theme_link" ] && [ ! -f "$theme_link" ]; then
         ln -sf "$default_theme" "$theme_link"
+      fi
+    '';
+    importGpgKey = lib.hm.dag.entryAfter [ "sopsNix" ] ''
+      gpg_key="$HOME/.gnupg/getboon-private.asc"
+      if [ -f "$gpg_key" ]; then
+        # Check if key is already imported
+        if ! ${pkgs.gnupg}/bin/gpg --list-secret-keys "aziz@getboon.ai" &>/dev/null; then
+          ${pkgs.gnupg}/bin/gpg --batch --import "$gpg_key" 2>/dev/null || true
+        fi
       fi
     '';
   };

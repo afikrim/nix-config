@@ -11,3 +11,6 @@ creation_rules:
   - path_regex: ^secrets/mac-personal/dev-secrets\.sops\.zsh$
     age:
       - "age187j89txmxvg9yw3rv2pcc0yaq7j03gtaxjsdg5cne3xklr6ajv7sx6jl0e"
+  - path_regex: ^secrets/mac-personal/gpg-getboon\.sops\.asc$
+    age:
+      - "age187j89txmxvg9yw3rv2pcc0yaq7j03gtaxjsdg5cne3xklr6ajv7sx6jl0e"
