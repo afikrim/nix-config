@@ -22,11 +22,23 @@ stdenv.mkDerivation rec {
   configurePhase = ''
     export LDFLAGS="-L${openssl.out}/lib"
     export CPPFLAGS="-I${openssl.dev}/include"
+    export HOME=$TMPDIR
 
     ./configure \
       --prefix=$out \
       --with-openssl-dir=${openssl.dev} \
-      --enable-shared
+      --enable-shared \
+      --disable-install-doc
+  '';
+
+  buildPhase = ''
+    export HOME=$TMPDIR
+    make -j$NIX_BUILD_CORES
+  '';
+
+  installPhase = ''
+    export HOME=$TMPDIR
+    make install
   '';
 
   meta = {

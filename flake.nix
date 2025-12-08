@@ -96,5 +96,43 @@
           ];
         };
       };
+
+      # Development shells for various projects
+      devShells = {
+        aarch64-darwin = {
+          boon-core = import ./devshells/boon-core.nix { pkgs = darwinPkgs; };
+          default = import ./devshells/boon-core.nix { pkgs = darwinPkgs; };
+        };
+        x86_64-darwin = let
+          x86Pkgs = import nixpkgs {
+            system = "x86_64-darwin";
+            config.allowUnfree = true;
+            inherit overlays;
+          };
+        in {
+          boon-core = import ./devshells/boon-core.nix { pkgs = x86Pkgs; };
+          default = import ./devshells/boon-core.nix { pkgs = x86Pkgs; };
+        };
+        aarch64-linux = let
+          linuxPkgs = import nixpkgs {
+            system = linuxSystem;
+            config.allowUnfree = true;
+            inherit overlays;
+          };
+        in {
+          boon-core = import ./devshells/boon-core.nix { pkgs = linuxPkgs; };
+          default = import ./devshells/boon-core.nix { pkgs = linuxPkgs; };
+        };
+        x86_64-linux = let
+          x86LinuxPkgs = import nixpkgs {
+            system = "x86_64-linux";
+            config.allowUnfree = true;
+            inherit overlays;
+          };
+        in {
+          boon-core = import ./devshells/boon-core.nix { pkgs = x86LinuxPkgs; };
+          default = import ./devshells/boon-core.nix { pkgs = x86LinuxPkgs; };
+        };
+      };
     };
 }

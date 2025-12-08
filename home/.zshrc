@@ -51,6 +51,38 @@ detect_system_theme() {
 export CURRENT_THEME=$(detect_system_theme)
 
 # =============================================================================
+# PATH HELPERS
+# =============================================================================
+typeset -g -U path
+
+path_prepend_unique() {
+    local target="$1"
+    [[ -z "$target" ]] && return
+    path=("$target" "${(@)path:#$target}")
+}
+
+path_append_unique() {
+    local target="$1"
+    [[ -z "$target" ]] && return
+    path=("${(@)path:#$target}" "$target")
+}
+
+ensure_nix_path_priority() {
+    local target
+    local nix_paths=(
+        "$HOME/.nix-profile/bin"
+        "/run/current-system/sw/bin"
+        "/nix/var/nix/profiles/default/bin"
+        "/etc/profiles/per-user/$USER/bin"
+    )
+
+    for target in "${nix_paths[@]}"; do
+        [[ -d "$target" ]] || continue
+        path=("$target" "${(@)path:#$target}")
+    done
+}
+
+# =============================================================================
 # OS-SPECIFIC CONFIGURATIONS
 # =============================================================================
 [[ "$OSTYPE" == "linux-gnu" && -f "$HOME/.linux.plugin.zsh" ]] && source "$HOME/.linux.plugin.zsh"
@@ -75,12 +107,14 @@ fi
 # pyenv setup
 if command -v pyenv >/dev/null 2>&1; then
     export PYENV_ROOT="$HOME/.pyenv"
-    [[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
+    [[ -d $PYENV_ROOT/bin ]] && path_prepend_unique "$PYENV_ROOT/bin"
     eval "$(pyenv init - zsh)"
 fi
 
 export ANDROID_HOME=~/Library/Android/sdk
-export PATH=$PATH:$ANDROID_HOME/tools:$ANDROID_HOME/tools/bin:$ANDROID_HOME/platform-tools
+path_append_unique "$ANDROID_HOME/tools"
+path_append_unique "$ANDROID_HOME/tools/bin"
+path_append_unique "$ANDROID_HOME/platform-tools"
 
 # =============================================================================
 # CURSOR/EDITOR DETECTION - Skip all customizations if in editor
@@ -399,4 +433,7 @@ if [[ $- == *i* ]] && [[ $SHLVL -eq 1 ]]; then
 fi
 
 # Added by Windsurf
-export PATH="/Users/mekari/.codeium/windsurf/bin:$PATH"
+path_prepend_unique "/Users/mekari/.codeium/windsurf/bin"
+
+# Keep Nix toolchains ahead of everything else
+ensure_nix_path_priority

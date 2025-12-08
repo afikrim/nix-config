@@ -5,14 +5,8 @@
 { pkgs }:
 
 let
-  # Build Ruby 3.3.6 from source with YJIT support
-  ruby = pkgs.ruby_3_3.override {
-    jemallocSupport = true;
-  };
-
-  # Node.js 20.x for frontend assets
-  nodejs = pkgs.nodejs_20;
-
+  # Build Ruby 3.3.6 from source to match Gemfile requirement
+  ruby = pkgs.callPackage ../pkgs/ruby_3_3_6.nix { };
 in
 pkgs.mkShell {
   name = "boon-core-devshell";
@@ -20,19 +14,23 @@ pkgs.mkShell {
   buildInputs = with pkgs; [
     # Ruby and dependencies
     ruby
-    bundler
     libyaml
     libffi
     zlib
     openssl
 
-    # Node.js for frontend
-    nodejs
-    nodePackages.npm
+    # For nokogiri
+    libxml2
+    libxslt
+
+    # Node.js 22 for frontend
+    nodejs_22
+
+    # Python 3.11 for libv8-node build
+    python311
 
     # PostgreSQL client libraries
     postgresql_16
-    libpq
 
     # Redis/Valkey
     valkey
@@ -40,39 +38,23 @@ pkgs.mkShell {
     # Image processing (for Active Storage)
     imagemagick
     vips
-    libheif
-    libjpeg
     libpng
     libwebp
 
-    # PDF tools
-    wkhtmltopdf
-    poppler_utils
-
-    # Browser automation
-    chromedriver
-    chromium
-
-    # Linting and code generation
+    # Linting
     hadolint
-    openapi-generator-cli
 
     # Build essentials
     pkg-config
     gnumake
-    gcc
     git
     curl
     jq
-    watchman
 
     # For native gem compilation
     gmp
     readline
     gdbm
-
-    # Mail testing (optional, can also run via docker)
-    mailpit
   ];
 
   shellHook = ''
@@ -80,20 +62,12 @@ pkgs.mkShell {
     export OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES
 
     # Ruby/Bundler configuration
-    export GEM_HOME="$HOME/.gem/ruby/3.3.0"
+    export GEM_HOME="$HOME/.gem/ruby/3.3.6"
     export GEM_PATH="$GEM_HOME:${ruby}/lib/ruby/gems/3.3.0"
     export PATH="$GEM_HOME/bin:$PATH"
 
-    # Ensure bundler uses the correct Ruby
-    export BUNDLE_FORCE_RUBY_PLATFORM=1
-
-    # PostgreSQL library paths for pg gem
-    export LDFLAGS="-L${pkgs.postgresql_16.lib}/lib -L${pkgs.openssl.out}/lib"
-    export CPPFLAGS="-I${pkgs.postgresql_16}/include -I${pkgs.openssl.dev}/include"
-    export PKG_CONFIG_PATH="${pkgs.postgresql_16}/lib/pkgconfig:${pkgs.openssl.dev}/lib/pkgconfig:$PKG_CONFIG_PATH"
-
-    # For nokogiri and other native gems
-    export NOKOGIRI_USE_SYSTEM_LIBRARIES=1
+    # PKG_CONFIG_PATH for native gem compilation (pg, nokogiri, etc.)
+    export PKG_CONFIG_PATH="${pkgs.postgresql_16}/lib/pkgconfig:${pkgs.openssl.dev}/lib/pkgconfig:${pkgs.libxml2.dev}/lib/pkgconfig:${pkgs.libxslt.dev}/lib/pkgconfig:$PKG_CONFIG_PATH"
 
     # For libvips (image processing)
     export VIPS_WARNING=0
@@ -110,7 +84,12 @@ pkgs.mkShell {
     echo "🚀 Boon Core development environment loaded!"
     echo "   Ruby: $(ruby --version)"
     echo "   Node: $(node --version)"
+    echo "   Python: $(python3 --version)"
     echo "   PostgreSQL client: $(psql --version)"
+    echo ""
+    echo "⚠️  Note: chromedriver, wkhtmltopdf, mailpit, openapi-generator"
+    echo "   are not included. Install via homebrew:"
+    echo "   brew install chromedriver wkhtmltopdf mailpit openapi-generator"
     echo ""
     echo "📋 Quick start:"
     echo "   1. Configure Sidekiq: bundle config enterprise.contribsys.com \$SIDEKIQ_ENT_KEY"

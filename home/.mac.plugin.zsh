@@ -1,12 +1,12 @@
 # pnpm
 export PNPM_HOME="$HOME/Library/pnpm"
-export PATH="$PNPM_HOME:$PATH"
+path_prepend_unique "$PNPM_HOME"
 # pnpm end
 
 export LOCAL_BIN="$HOME/.local/bin"
-export PATH="$LOCAL_BIN:$PATH"
-export PATH="/opt/homebrew/opt/openjdk/bin:$PATH"
-export PATH="$PATH:$(go env GOPATH)/bin"
+path_prepend_unique "$LOCAL_BIN"
+path_prepend_unique "/opt/homebrew/opt/openjdk/bin"
+path_append_unique "$(go env GOPATH)/bin"
 
 if [[ -f "$HOME/.config/dev/secrets.zsh" ]]; then
   source "$HOME/.config/dev/secrets.zsh"
@@ -24,21 +24,21 @@ export SDKMAN_DIR="$HOME/.sdkman"
 
 export PHPENV_ROOT="$HOME/.local/share/phpenv"
 if [ -d "${PHPENV_ROOT}" ]; then
-  export PATH="${PHPENV_ROOT}/bin:${PATH}"
+  path_prepend_unique "${PHPENV_ROOT}/bin"
   eval "$(phpenv init -)"
 fi
 
 # Get java home from libexec
 if command -v /usr/libexec/java_home &> /dev/null; then
   export JAVA_HOME="$(/usr/libexec/java_home -v 17)"
-  export PATH="$JAVA_HOME/bin:$PATH"
+  path_prepend_unique "$JAVA_HOME/bin"
 fi
 
 export LDFLAGS="-L/opt/homebrew/opt/mysql-client/lib"
 export CPPFLAGS="-I/opt/homebrew/opt/mysql-client/include"
 
 export PKG_CONFIG_PATH="/opt/homebrew/opt/mysql-client/lib/pkgconfig"
-export PATH="/opt/homebrew/bin:$PATH"
+path_prepend_unique "/opt/homebrew/bin"
 
-# finally append the Nix profile bin so it stays in PATH but after other toolchains
-export PATH="$PATH:$HOME/.nix-profile/bin"
+# Keep the Nix profile tools available; ensure_nix_path_priority later moves them to the front
+path_prepend_unique "$HOME/.nix-profile/bin"
