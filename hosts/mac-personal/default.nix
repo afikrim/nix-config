@@ -54,11 +54,29 @@
     yarn
     zsh
     home-manager
+    cloudflared
   ];
 
   system.defaults.NSGlobalDomain = {
     ApplePressAndHoldEnabled = false;
     AppleFontSmoothing = 1;
+  };
+
+  launchd.user.agents.cloudflared = {
+    serviceConfig = {
+      Label = "com.cloudflare.cloudflared";
+      ProgramArguments = [
+        "${pkgs.cloudflared}/bin/cloudflared"
+        "tunnel"
+        "run"
+        "--token-file"
+        "/Users/azizf/.config/cloudflared/tunnel-token"
+      ];
+      RunAtLoad = true;
+      KeepAlive = true;
+      StandardOutPath = "/Users/azizf/Library/Logs/cloudflared.log";
+      StandardErrorPath = "/Users/azizf/Library/Logs/cloudflared.err.log";
+    };
   };
 
   system.stateVersion = 5;

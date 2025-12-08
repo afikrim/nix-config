@@ -33,6 +33,9 @@ let
   gpgSecretsFile = "${toString repoRoot}/secrets/mac-personal/gpg-getboon.sops.asc";
   gpgSecretsExists = builtins.pathExists gpgSecretsFile;
   gpgSecretsPath = if gpgSecretsExists then builtins.path { path = gpgSecretsFile; name = "mac-personal-gpg-getboon"; } else null;
+  cloudflareTokenFile = "${toString repoRoot}/secrets/mac-personal/cloudflare-tunnel-token.sops.txt";
+  cloudflareTokenExists = builtins.pathExists cloudflareTokenFile;
+  cloudflareTokenPath = if cloudflareTokenExists then builtins.path { path = cloudflareTokenFile; name = "mac-personal-cloudflare-tunnel-token"; } else null;
   alacrittyThemes = pkgs.fetchFromGitHub {
     owner = "alacritty";
     repo = "alacritty-theme";
@@ -128,9 +131,17 @@ in
     format = "binary";
     path = "${config.home.homeDirectory}/.gnupg/getboon-private.asc";
   };
+  sops.secrets."cloudflare-tunnel-token" = lib.mkIf cloudflareTokenExists {
+    sopsFile = cloudflareTokenPath;
+    format = "binary";
+    path = "${config.home.homeDirectory}/.config/cloudflared/tunnel-token";
+  };
   sops.age.keyFile = lib.mkIf secretsExists "${config.home.homeDirectory}/.config/sops/age/keys.txt";
 
   home.activation = {
+    ensureCloudflaredDir = lib.hm.dag.entryBefore [ "sopsNix" ] ''
+      mkdir -p "$HOME/.config/cloudflared"
+    '';
     developmentDirs = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
       mkdir -p "$HOME/Development/mekari" \
                "$HOME/Development/getboon" \

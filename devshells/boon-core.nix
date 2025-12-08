@@ -44,6 +44,12 @@ pkgs.mkShell {
     # Linting
     hadolint
 
+    # Process management
+    process-compose
+
+    # Mail testing
+    mailpit
+
     # Build essentials
     pkg-config
     gnumake
@@ -69,6 +75,36 @@ pkgs.mkShell {
     # PKG_CONFIG_PATH for native gem compilation (pg, nokogiri, etc.)
     export PKG_CONFIG_PATH="${pkgs.postgresql_16}/lib/pkgconfig:${pkgs.openssl.dev}/lib/pkgconfig:${pkgs.libxml2.dev}/lib/pkgconfig:${pkgs.libxslt.dev}/lib/pkgconfig:$PKG_CONFIG_PATH"
 
+    # PostgreSQL data directory
+    export PGDATA="$HOME/.local/share/boon-postgres"
+    export PGHOST="localhost"
+    export PGUSER="postgres"
+    export PGPASSWORD="password"
+    export PGDATABASE="boon_development"
+
+    # Initialize PostgreSQL if needed
+    if [ ! -d "$PGDATA" ]; then
+      echo "📦 Initializing PostgreSQL database..."
+      initdb -D "$PGDATA" --no-locale --encoding=UTF8 --username=postgres --auth=md5 --pwfile=<(echo "password")
+      echo "unix_socket_directories = '$PGDATA'" >> "$PGDATA/postgresql.conf"
+      echo "listen_addresses = 'localhost'" >> "$PGDATA/postgresql.conf"
+      echo "port = 5432" >> "$PGDATA/postgresql.conf"
+      # Allow password auth from localhost
+      echo "host all all 127.0.0.1/32 md5" >> "$PGDATA/pg_hba.conf"
+      echo "host all all ::1/128 md5" >> "$PGDATA/pg_hba.conf"
+    fi
+
+    # Create database after postgres starts (run once)
+    _create_boon_db() {
+      if pg_isready -h localhost -p 5432 -U postgres >/dev/null 2>&1; then
+        if ! psql -h localhost -U postgres -lqt | cut -d \| -f 1 | grep -qw boon_development; then
+          echo "📦 Creating boon_development database..."
+          createdb -h localhost -U postgres boon_development
+        fi
+      fi
+    }
+    export -f _create_boon_db
+
     # For libvips (image processing)
     export VIPS_WARNING=0
 
@@ -85,17 +121,16 @@ pkgs.mkShell {
     echo "   Ruby: $(ruby --version)"
     echo "   Node: $(node --version)"
     echo "   Python: $(python3 --version)"
-    echo "   PostgreSQL client: $(psql --version)"
-    echo ""
-    echo "⚠️  Note: chromedriver, wkhtmltopdf, mailpit, openapi-generator"
-    echo "   are not included. Install via homebrew:"
-    echo "   brew install chromedriver wkhtmltopdf mailpit openapi-generator"
+    echo "   PostgreSQL: $(postgres --version)"
     echo ""
     echo "📋 Quick start:"
-    echo "   1. Configure Sidekiq: bundle config enterprise.contribsys.com \$SIDEKIQ_ENT_KEY"
-    echo "   2. Install dependencies: make install"
-    echo "   3. Setup database: make db_setup"
-    echo "   4. Start server: make run"
+    echo "   1. Start services: process-compose up"
+    echo "   2. Configure Sidekiq: bundle config enterprise.contribsys.com \$SIDEKIQ_ENT_KEY"
+    echo "   3. Install dependencies: make install"
+    echo "   4. Setup database: make db_setup"
+    echo "   5. Start Rails: make run"
+    echo ""
+    echo "⚠️  Optional (via homebrew): chromedriver, wkhtmltopdf, openapi-generator"
   '';
 
   # Environment variables

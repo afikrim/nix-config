@@ -54,6 +54,7 @@
     yarn
     zsh
     home-manager
+    cloudflared
   ];
 
   system.defaults.NSGlobalDomain = {

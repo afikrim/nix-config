@@ -119,6 +119,35 @@ in
   };
   sops.age.keyFile = lib.mkIf secretsExists "${config.home.homeDirectory}/.config/sops/age/keys.txt";
 
+  programs.ssh = {
+    enable = true;
+    matchBlocks = {
+      "mac-personal" = {
+        hostname = "ssh.azifexlab.net";
+        user = "azizf";
+        proxyCommand = "${pkgs.cloudflared}/bin/cloudflared access ssh --hostname %h";
+      };
+    };
+  };
+
+  home.file.".local/bin/vnc-mac-personal" = {
+    executable = true;
+    text = ''
+      #!/bin/bash
+      # VNC to mac-personal via Cloudflare tunnel
+      port=''${1:-5901}
+      echo "Starting VNC tunnel on localhost:$port..."
+      ${pkgs.cloudflared}/bin/cloudflared access tcp --hostname vnc.azifexlab.net --url localhost:$port &
+      pid=$!
+      sleep 2
+      echo "Opening Screen Sharing..."
+      open "vnc://localhost:$port"
+      echo "Tunnel running (PID: $pid). Press Ctrl+C or close terminal to stop."
+      trap "kill $pid 2>/dev/null" EXIT
+      wait $pid
+    '';
+  };
+
   home.activation = {
     developmentDirs = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
       mkdir -p "$HOME/Development/mekari" \
