@@ -50,7 +50,6 @@ let
       pnpm
       bun
       flutter
-      copilot-cli
       google-cloud-sdk
     ]);
 in

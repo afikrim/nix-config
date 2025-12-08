@@ -30,6 +30,12 @@ let
   secretsFile = "${toString repoRoot}/secrets/mac-mekari/dev-secrets.sops.zsh";
   secretsExists = builtins.pathExists secretsFile;
   secretsPath = if secretsExists then builtins.path { path = secretsFile; name = "mac-mekari-dev-secrets"; } else null;
+  gpgSecretsFile = "${toString repoRoot}/secrets/mac-mekari/gpg-getboon.sops.asc";
+  gpgSecretsExists = builtins.pathExists gpgSecretsFile;
+  gpgSecretsPath = if gpgSecretsExists then builtins.path { path = gpgSecretsFile; name = "mac-mekari-gpg-getboon"; } else null;
+  cloudflareTokenFile = "${toString repoRoot}/secrets/mac-mekari/cloudflare-tunnel-token.sops.txt";
+  cloudflareTokenExists = builtins.pathExists cloudflareTokenFile;
+  cloudflareTokenPath = if cloudflareTokenExists then builtins.path { path = cloudflareTokenFile; name = "mac-mekari-cloudflare-tunnel-token"; } else null;
   alacrittyThemes = pkgs.fetchFromGitHub {
     owner = "alacritty";
     repo = "alacritty-theme";
@@ -44,7 +50,7 @@ let
       pnpm
       bun
       flutter
-      copilot-cli
+      github-copilot-cli
     ]);
 in
 {
@@ -99,6 +105,23 @@ in
         source = "${dotfiles}/.zsh";
         recursive = true;
       };
+      ".local/bin/vnc-mac-personal" = {
+        executable = true;
+        text = ''
+          #!/bin/bash
+          # VNC to mac-personal via Cloudflare tunnel
+          port=''${1:-5901}
+          echo "Starting VNC tunnel on localhost:$port..."
+          ${pkgs.cloudflared}/bin/cloudflared access tcp --hostname vnc.azifexlab.net --url localhost:$port &
+          pid=$!
+          sleep 2
+          echo "Opening Screen Sharing..."
+          open "vnc://localhost:$port"
+          echo "Tunnel running (PID: $pid). Press Ctrl+C or close terminal to stop."
+          trap "kill $pid 2>/dev/null" EXIT
+          wait $pid
+        '';
+      };
     }
     // pluginFiles
     // tmuxPluginFiles;
@@ -117,6 +140,16 @@ in
     format = "binary";
     path = "${config.home.homeDirectory}/.config/dev/secrets.zsh";
   };
+  sops.secrets."gpg-getboon" = lib.mkIf gpgSecretsExists {
+    sopsFile = gpgSecretsPath;
+    format = "binary";
+    path = "${config.home.homeDirectory}/.gnupg/getboon-private.asc";
+  };
+  sops.secrets."cloudflare-tunnel-token" = lib.mkIf cloudflareTokenExists {
+    sopsFile = cloudflareTokenPath;
+    format = "binary";
+    path = "${config.home.homeDirectory}/.config/cloudflared/tunnel-token";
+  };
   sops.age.keyFile = lib.mkIf secretsExists "${config.home.homeDirectory}/.config/sops/age/keys.txt";
 
   programs.ssh = {
@@ -130,28 +163,14 @@ in
     };
   };
 
-  home.file.".local/bin/vnc-mac-personal" = {
-    executable = true;
-    text = ''
-      #!/bin/bash
-      # VNC to mac-personal via Cloudflare tunnel
-      port=''${1:-5901}
-      echo "Starting VNC tunnel on localhost:$port..."
-      ${pkgs.cloudflared}/bin/cloudflared access tcp --hostname vnc.azifexlab.net --url localhost:$port &
-      pid=$!
-      sleep 2
-      echo "Opening Screen Sharing..."
-      open "vnc://localhost:$port"
-      echo "Tunnel running (PID: $pid). Press Ctrl+C or close terminal to stop."
-      trap "kill $pid 2>/dev/null" EXIT
-      wait $pid
-    '';
-  };
-
   home.activation = {
+    ensureCloudflaredDir = lib.hm.dag.entryBefore [ "sopsNix" ] ''
+      mkdir -p "$HOME/.config/cloudflared"
+    '';
     developmentDirs = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
       mkdir -p "$HOME/Development/mekari" \
-               "$HOME/Development/personal"
+               "$HOME/Development/personal" \
+               "$HOME/Development/getboon"
     '';
     prepareAlacrittyDir = lib.hm.dag.entryAfter [ "developmentDirs" ] ''
       target="$HOME/.config/alacritty"
@@ -174,6 +193,15 @@ in
       default_theme="${defaultAlacrittyTheme}"
       if [ ! -L "$theme_link" ] && [ ! -f "$theme_link" ]; then
         ln -sf "$default_theme" "$theme_link"
+      fi
+    '';
+    importGpgKey = lib.hm.dag.entryAfter [ "sopsNix" ] ''
+      gpg_key="$HOME/.gnupg/getboon-private.asc"
+      if [ -f "$gpg_key" ]; then
+        # Check if key is already imported
+        if ! ${pkgs.gnupg}/bin/gpg --list-secret-keys "aziz@getboon.ai" &>/dev/null; then
+          ${pkgs.gnupg}/bin/gpg --batch --import "$gpg_key" 2>/dev/null || true
+        fi
       fi
     '';
   };
