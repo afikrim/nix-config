@@ -1,3 +1,6 @@
+[url "git@bitbucket.org:jurnal"]
+	insteadOf = https://bitbucket.org/jurnal
+
 [user]
   name = Aziz Fikri
   email = aziz.fikri@mekari.com

@@ -9,8 +9,8 @@
 [includeIf "gitdir:~/Development/afikrim/"]
   path = ~/.gitconfig-personal
 
-[url "git@github.com"]
-	insteadOf = https://github.com
+[url "git@github.com:afikrim"]
+	insteadOf = https://github.com/afikrim
 [user]
 	name = Aziz Fikri Mahmudi
 	email = afikrim10@gmail.com
