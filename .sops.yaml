@@ -5,9 +5,9 @@
 #       age: ["age1yourpublickeyhere"]
 
 creation_rules:
-  - path: secrets/mac-mekari/dev-secrets.sops.zsh
+  - path_regex: ^secrets/mac-mekari/dev-secrets\.sops\.zsh$
     age:
       - "age1xewgjv9042k8d89pwnvgttthjjjkxq7vjqnww4yvp60jxyqkvajq8arseg"
-  - path: secrets/mac-personal/dev-secrets.sops.zsh
+  - path_regex: ^secrets/mac-personal/dev-secrets\.sops\.zsh$
     age:
       - "age187j89txmxvg9yw3rv2pcc0yaq7j03gtaxjsdg5cne3xklr6ajv7sx6jl0e"
