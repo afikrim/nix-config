@@ -1,2 +1,4 @@
 home/.config/dev/secrets.zsh
 secrets/*/*.age-key.txt
+
+.DS_Store

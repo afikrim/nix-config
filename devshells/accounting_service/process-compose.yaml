@@ -1,0 +1,89 @@
+version: "0.5"
+
+processes:
+  mysql:
+    command: >-
+      bash -lc "mysqld --datadir=$MYSQL_DATA_DIR --socket=$MYSQL_SOCKET --port=$MYSQL_PORT
+      --bind-address=$MYSQL_HOST --log-error=$MYSQL_LOG_DIR/error.log --pid-file=$MYSQL_PID_FILE
+      --skip-mysqlx --default-authentication-plugin=mysql_native_password"
+    readiness_probe:
+      exec:
+        command: >-
+          bash -lc "mysqladmin --protocol=socket --socket $MYSQL_SOCKET ping"
+        interval: 2s
+        timeout: 2s
+        retries: 30
+    shutdown:
+      command: >-
+        bash -lc "mysqladmin --protocol=socket --socket $MYSQL_SOCKET shutdown"
+    availability:
+      restart: on_failure
+
+  redis:
+    command: >-
+      bash -lc "redis-server --bind $REDIS_HOST --port $REDIS_PORT --dir $REDIS_DATA_DIR
+      --dbfilename dump.rdb --save 900 1 --save 300 10 --appendonly yes"
+    readiness_probe:
+      exec:
+        command: >-
+          bash -lc "redis-cli -h $REDIS_HOST -p $REDIS_PORT ping"
+        interval: 2s
+        timeout: 2s
+        retries: 20
+    availability:
+      restart: on_failure
+
+  elasticsearch:
+    command: >-
+      bash -lc "elasticsearch -E cluster.name=accounting-dev -E node.name=accounting-node-1
+      -E network.host=$ELASTICSEARCH_HOST -E http.port=$ELASTICSEARCH_HTTP_PORT
+      -E transport.port=$ELASTICSEARCH_TRANSPORT_PORT -E discovery.type=single-node
+      -E xpack.security.enabled=false -E path.data=$ELASTICSEARCH_DATA_DIR -E path.logs=$ELASTICSEARCH_LOG_DIR"
+    readiness_probe:
+      exec:
+        command: >-
+          bash -lc "curl -fsSL $ELASTICSEARCH_URL/_cluster/health >/dev/null"
+        interval: 3s
+        timeout: 3s
+        retries: 40
+    availability:
+      restart: on_failure
+
+  zookeeper:
+    command: >-
+      bash -lc "ZOO_LOG_DIR=$ZOOKEEPER_LOG_DIR zkServer.sh start-foreground dev/services/zookeeper/zoo.cfg"
+    readiness_probe:
+      exec:
+        command: >-
+          bash -lc "zkCli.sh -server $ZOOKEEPER_HOST:$ZOOKEEPER_PORT ls / >/dev/null"
+        interval: 2s
+        timeout: 2s
+        retries: 20
+    availability:
+      restart: on_failure
+
+  kafka:
+    depends_on:
+      zookeeper:
+        condition: process_healthy
+    command: >-
+      bash -lc "KAFKA_HEAP_OPTS=${KAFKA_HEAP_OPTS:-'-Xms512M -Xmx512M'} kafka-server-start.sh
+      dev/services/kafka/server.properties"
+    readiness_probe:
+      exec:
+        command: >-
+          bash -lc "kafka-topics.sh --bootstrap-server $KAFKA_HOST:$KAFKA_PORT --list >/dev/null"
+        interval: 3s
+        timeout: 3s
+        retries: 40
+    availability:
+      restart: on_failure
+
+groups:
+  services:
+    processes:
+      - mysql
+      - redis
+      - elasticsearch
+      - zookeeper
+      - kafka

@@ -94,8 +94,8 @@
       # Development shells for various projects
       devShells = {
         aarch64-darwin = {
-          boon-core = import ./devshells/boon-core.nix { pkgs = darwinPkgs; };
-          default = import ./devshells/boon-core.nix { pkgs = darwinPkgs; };
+          boon-core = import ./devshells/boon-core/shell.nix { pkgs = darwinPkgs; };
+          accounting_service = import ./devshells/accounting_service/shell.nix { pkgs = darwinPkgs; };
         };
         x86_64-darwin = let
           x86Pkgs = import nixpkgs {
@@ -104,8 +104,8 @@
             inherit overlays;
           };
         in {
-          boon-core = import ./devshells/boon-core.nix { pkgs = x86Pkgs; };
-          default = import ./devshells/boon-core.nix { pkgs = x86Pkgs; };
+          boon-core = import ./devshells/boon-core/shell.nix { pkgs = x86Pkgs; };
+          accounting_service = import ./devshells/accounting_service/shell.nix { pkgs = darwinPkgs; };
         };
         aarch64-linux = let
           linuxPkgs = import nixpkgs {
@@ -114,8 +114,8 @@
             inherit overlays;
           };
         in {
-          boon-core = import ./devshells/boon-core.nix { pkgs = linuxPkgs; };
-          default = import ./devshells/boon-core.nix { pkgs = linuxPkgs; };
+          boon-core = import ./devshells/boon-core/shell.nix { pkgs = linuxPkgs; };
+          accounting_service = import ./devshells/accounting_service/shell.nix { pkgs = darwinPkgs; };
         };
         x86_64-linux = let
           x86LinuxPkgs = import nixpkgs {
@@ -124,8 +124,8 @@
             inherit overlays;
           };
         in {
-          boon-core = import ./devshells/boon-core.nix { pkgs = x86LinuxPkgs; };
-          default = import ./devshells/boon-core.nix { pkgs = x86LinuxPkgs; };
+          boon-core = import ./devshells/boon-core/shell.nix { pkgs = x86LinuxPkgs; };
+          accounting_service = import ./devshells/accounting_service/shell.nix { pkgs = darwinPkgs; };
         };
       };
     };
