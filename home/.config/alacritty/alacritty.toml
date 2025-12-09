@@ -133,3 +133,57 @@ command = { program = "/bin/sh", args = ["-c", "echo 'light' > ~/.current_theme 
 key = "F3"
 mods = "Command" 
 command = { program = "/bin/sh", args = ["-c", "echo 'dark' > ~/.current_theme && ~/.config/scripts/theme-switcher.sh"] }
+
+# Cmd + Shift + 1
+[[keyboard.bindings]]
+key = "Key1"
+mods = "Command|Shift"
+action = "SelectTab1"
+
+# Cmd + Shift + 2
+[[keyboard.bindings]]
+key = "Key2"
+mods = "Command|Shift"
+action = "SelectTab2"
+
+# Cmd + Shift + 3
+[[keyboard.bindings]]
+key = "Key3"
+mods = "Command|Shift"
+action = "SelectTab3"
+
+# Cmd + Shift + 4
+[[keyboard.bindings]]
+key = "Key4"
+mods = "Command|Shift"
+action = "SelectTab4"
+
+# Cmd + Shift + 5
+[[keyboard.bindings]]
+key = "Key5"
+mods = "Command|Shift"
+action = "SelectTab5"
+
+# Cmd + Shift + 6
+[[keyboard.bindings]]
+key = "Key6"
+mods = "Command|Shift"
+action = "SelectTab6"
+
+# Cmd + Shift + 7
+[[keyboard.bindings]]
+key = "Key7"
+mods = "Command|Shift"
+action = "SelectTab7"
+
+# Cmd + Shift + 8
+[[keyboard.bindings]]
+key = "Key8"
+mods = "Command|Shift"
+action = "SelectTab8"
+
+# Cmd + Shift + 9
+[[keyboard.bindings]]
+key = "Key9"
+mods = "Command|Shift"
+action = "SelectTab9"

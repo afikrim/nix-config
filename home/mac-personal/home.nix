@@ -66,6 +66,15 @@ in
 
   programs.home-manager.enable = true;
 
+  programs.codex = {
+    enable = true;
+  };
+
+  programs.claude-code = {
+    enable = true;
+  };
+
+
   home.packages =
     (with pkgs; [
       alacritty
@@ -97,8 +106,11 @@ in
         source = "${dotfiles}/.claude/commands/ultrathink";
         recursive = true;
       };
+      ".codex/config.toml".source = "${dotfiles}/.codex/config.toml";
+      ".codex/notify.sh".source = "${dotfiles}/.codex/notify.sh";
+      ".copilot/config.json".source = "${dotfiles}/.copilot/config.json";
+      ".copilot/mcp-config.json".source = "${dotfiles}/.copilot/mcp-config.json";
       ".config/alacritty/alacritty.toml".source = "${dotfiles}/.config/alacritty/alacritty.toml";
-      ".config/alacritty/alacritty.toml.bak".source = "${dotfiles}/.config/alacritty/alacritty.toml.bak";
       ".config/scripts/theme-switcher.sh" = {
         source = "${dotfiles}/.config/scripts/theme-switcher.sh";
         executable = true;

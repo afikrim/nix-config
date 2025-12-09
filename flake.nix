@@ -78,9 +78,6 @@
           extraSpecialArgs = { inherit dotfiles repoRoot; };
           modules = [
             sops-nix.homeManagerModules.sops
-            ./modules/claude.nix
-            ./modules/codex.nix
-            ./modules/copilot.nix
             ./home/mac-mekari/home.nix
           ];
         };
@@ -89,9 +86,6 @@
           extraSpecialArgs = { inherit dotfiles repoRoot; };
           modules = [
             sops-nix.homeManagerModules.sops
-            ./modules/claude.nix
-            ./modules/codex.nix
-            ./modules/copilot.nix
             ./home/mac-personal/home.nix
           ];
         };
