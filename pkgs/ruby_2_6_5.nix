@@ -10,6 +10,10 @@ stdenv.mkDerivation rec {
     sha256 = "ZpdrcW7MH9NPm3w8Kwe703YxgVN3ouPoWlsZTP3L7X0=";
   };
 
+  patches = [
+    ./patches/ruby-2.6.5-darwin-libffi.patch
+  ];
+
   nativeBuildInputs = [
     autoconf automake bison pkg-config
   ];

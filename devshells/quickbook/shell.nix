@@ -12,6 +12,7 @@ let
   ruby_2_6_5_wrapper = pkgs.callPackage ../../pkgs/ruby_2_6_5_wrapper.nix {
     inherit ruby_2_6_5;
   };
+  mysql = pkgs.mysql80;
 
   rubyGemsPath = "${ruby_2_6_5}/lib/ruby/gems/2.6.0";
 
@@ -35,17 +36,17 @@ pkgs.mkShell {
     libiconv
     pkg-config
 
-    # MySQL 5.7 (legacy)
-    mysql57
+    # MySQL 8.0
+    mysql
 
     # Redis
     redis
 
     # Elasticsearch 7 (legacy)
-    elasticsearch7
+    elasticsearch
 
     # Node.js for frontend
-    nodejs_18
+    nodejs_14
     yarn
 
     # Process management
@@ -84,7 +85,7 @@ pkgs.mkShell {
     export CPPFLAGS="-Dregister= ''${CPPFLAGS:-}"
 
     # PKG_CONFIG_PATH for native gem compilation
-    export PKG_CONFIG_PATH="${pkgs.openssl_1_1.dev}/lib/pkgconfig:${pkgs.mysql57}/lib/pkgconfig:$PKG_CONFIG_PATH"
+    export PKG_CONFIG_PATH="${pkgs.openssl_1_1.dev}/lib/pkgconfig:${mysql}/lib/pkgconfig:$PKG_CONFIG_PATH"
 
     # Data directories
     export DEV_DATA_DIR="$QUICKBOOK_ROOT/.devdata"
@@ -131,14 +132,14 @@ pkgs.mkShell {
 
     # Initialize Elasticsearch config
     if [ ! -d "$ELASTICSEARCH_CONFIG_DIR" ]; then
-      cp -R ${pkgs.elasticsearch7}/config "$ELASTICSEARCH_CONFIG_DIR"
+      cp -R ${pkgs.elasticsearch}/config "$ELASTICSEARCH_CONFIG_DIR"
       chmod -R u+rwX "$ELASTICSEARCH_CONFIG_DIR"
     fi
 
     # Initialize MySQL
     if [ ! -f "$MYSQL_DATA_DIR/.initialized" ]; then
-      echo "Initializing MySQL 5.7 data directory in $MYSQL_DATA_DIR"
-      mysqld --initialize-insecure --datadir="$MYSQL_DATA_DIR" --basedir=${pkgs.mysql57}
+      echo "Initializing MySQL 8.0 data directory in $MYSQL_DATA_DIR"
+      mysqld --initialize-insecure --datadir="$MYSQL_DATA_DIR" --basedir=${mysql}
       touch "$MYSQL_DATA_DIR/.initialized"
     fi
 
@@ -147,7 +148,7 @@ pkgs.mkShell {
       echo "Quickbook development environment loaded!"
       echo "   Ruby: $(ruby2.6.5 -v 2>/dev/null || echo 'ruby2.6.5 wrapper')"
       echo "   Node: $(node --version)"
-      echo "   MySQL: 5.7"
+      echo "   MySQL: 8.0"
       echo "   Elasticsearch: 7.x"
       echo ""
       echo "Quick start:"

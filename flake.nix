@@ -15,9 +15,10 @@
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    nixpkgs-legacy.url = "github:NixOS/nixpkgs/nixos-21.11";
   };
 
-  outputs = { self, nixpkgs, nix-darwin, home-manager, sops-nix }:
+  outputs = { self, nixpkgs, nix-darwin, home-manager, sops-nix, nixpkgs-legacy }:
     let
       lib = nixpkgs.lib;
       linuxSystem = "aarch64-linux";
@@ -39,12 +40,31 @@
         else
           { };
       overlays = [ braveOverlay ];
-      darwinPkgs = import nixpkgs {
-        system = darwinSystem;
+      mkPkgsFor = system: import nixpkgs {
+        inherit system overlays;
         config.allowUnfree = true;
         config.permittedInsecurePackages = [ "openssl-1.1.1w" ];
-        inherit overlays;
       };
+      mkLegacyPkgsFor = system: import nixpkgs-legacy {
+        inherit system;
+        config.allowUnfree = true;
+        config.permittedInsecurePackages = [ "openssl-1.1.1w" ];
+      };
+      withQuickbookDeps = base: legacy: base // {
+        nodejs_14 = legacy."nodejs-14_x";
+      };
+      darwinPkgs = mkPkgsFor darwinSystem;
+      legacyDarwinPkgs = mkLegacyPkgsFor darwinSystem;
+      quickbookDarwinPkgs = withQuickbookDeps darwinPkgs legacyDarwinPkgs;
+      x86DarwinPkgs = mkPkgsFor "x86_64-darwin";
+      legacyX86DarwinPkgs = mkLegacyPkgsFor "x86_64-darwin";
+      quickbookX86DarwinPkgs = withQuickbookDeps x86DarwinPkgs legacyX86DarwinPkgs;
+      linuxPkgs = mkPkgsFor linuxSystem;
+      legacyLinuxPkgs = mkLegacyPkgsFor linuxSystem;
+      quickbookLinuxPkgs = withQuickbookDeps linuxPkgs legacyLinuxPkgs;
+      x86LinuxPkgs = mkPkgsFor "x86_64-linux";
+      legacyX86LinuxPkgs = mkLegacyPkgsFor "x86_64-linux";
+      quickbookX86LinuxPkgs = withQuickbookDeps x86LinuxPkgs legacyX86LinuxPkgs;
       dotfiles = lib.cleanSource ./home;
       repoRoot = ./.;
       mkDarwinHost = hostModule:
@@ -97,43 +117,22 @@
         aarch64-darwin = {
           boon-core = import ./devshells/boon-core/shell.nix { pkgs = darwinPkgs; };
           accounting_service = import ./devshells/accounting_service/shell.nix { pkgs = darwinPkgs; };
-          quickbook = import ./devshells/quickbook/shell.nix { pkgs = darwinPkgs; };
+          quickbook = import ./devshells/quickbook/shell.nix { pkgs = quickbookDarwinPkgs; };
         };
-        x86_64-darwin = let
-          x86Pkgs = import nixpkgs {
-            system = "x86_64-darwin";
-            config.allowUnfree = true;
-            config.permittedInsecurePackages = [ "openssl-1.1.1w" ];
-            inherit overlays;
-          };
-        in {
-          boon-core = import ./devshells/boon-core/shell.nix { pkgs = x86Pkgs; };
-          accounting_service = import ./devshells/accounting_service/shell.nix { pkgs = x86Pkgs; };
-          quickbook = import ./devshells/quickbook/shell.nix { pkgs = x86Pkgs; };
+        x86_64-darwin = {
+          boon-core = import ./devshells/boon-core/shell.nix { pkgs = x86DarwinPkgs; };
+          accounting_service = import ./devshells/accounting_service/shell.nix { pkgs = x86DarwinPkgs; };
+          quickbook = import ./devshells/quickbook/shell.nix { pkgs = quickbookX86DarwinPkgs; };
         };
-        aarch64-linux = let
-          linuxPkgs = import nixpkgs {
-            system = linuxSystem;
-            config.allowUnfree = true;
-            config.permittedInsecurePackages = [ "openssl-1.1.1w" ];
-            inherit overlays;
-          };
-        in {
+        aarch64-linux = {
           boon-core = import ./devshells/boon-core/shell.nix { pkgs = linuxPkgs; };
           accounting_service = import ./devshells/accounting_service/shell.nix { pkgs = linuxPkgs; };
-          quickbook = import ./devshells/quickbook/shell.nix { pkgs = linuxPkgs; };
+          quickbook = import ./devshells/quickbook/shell.nix { pkgs = quickbookLinuxPkgs; };
         };
-        x86_64-linux = let
-          x86LinuxPkgs = import nixpkgs {
-            system = "x86_64-linux";
-            config.allowUnfree = true;
-            config.permittedInsecurePackages = [ "openssl-1.1.1w" ];
-            inherit overlays;
-          };
-        in {
+        x86_64-linux = {
           boon-core = import ./devshells/boon-core/shell.nix { pkgs = x86LinuxPkgs; };
           accounting_service = import ./devshells/accounting_service/shell.nix { pkgs = x86LinuxPkgs; };
-          quickbook = import ./devshells/quickbook/shell.nix { pkgs = x86LinuxPkgs; };
+          quickbook = import ./devshells/quickbook/shell.nix { pkgs = quickbookX86LinuxPkgs; };
         };
       };
     };
