@@ -52,6 +52,10 @@ let
       flutter
       google-cloud-sdk
     ]);
+  # SSH authorized keys for remote access
+  authorizedKeys = ''
+    ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINYlfc5U0E6Y3tblUm6V60yN3X6IpzDYxJvvFP02w7EW mekari@mac-mekari
+  '';
 in
 {
   home = {
@@ -107,6 +111,9 @@ in
         source = "${dotfiles}/.zsh";
         recursive = true;
       };
+      ".ssh/authorized_keys" = {
+        text = authorizedKeys;
+      };
     }
     // pluginFiles
     // tmuxPluginFiles;
@@ -138,6 +145,10 @@ in
   sops.age.keyFile = lib.mkIf secretsExists "${config.home.homeDirectory}/.config/sops/age/keys.txt";
 
   home.activation = {
+    ensureSshDir = lib.hm.dag.entryBefore [ "writeBoundary" ] ''
+      mkdir -p "$HOME/.ssh"
+      chmod 700 "$HOME/.ssh"
+    '';
     ensureCloudflaredDir = lib.hm.dag.entryBefore [ "sopsNix" ] ''
       mkdir -p "$HOME/.config/cloudflared"
     '';
