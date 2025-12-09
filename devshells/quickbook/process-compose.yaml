@@ -1,0 +1,57 @@
+version: "0.5"
+
+processes:
+  mysql:
+    command: |
+      mysqld \
+        --datadir=$MYSQL_DATA_DIR \
+        --socket=$MYSQL_SOCKET \
+        --port=$MYSQL_PORT \
+        --bind-address=$MYSQL_HOST \
+        --log-error=$MYSQL_LOG_DIR/error.log \
+        --skip-grant-tables \
+        --default-authentication-plugin=mysql_native_password
+    readiness_probe:
+      exec:
+        command: mysqladmin --protocol=socket --socket $MYSQL_SOCKET ping
+      initial_delay_seconds: 5
+      period_seconds: 2
+      timeout_seconds: 5
+    availability:
+      restart: on_failure
+
+  redis:
+    command: redis-server --bind $REDIS_HOST --port $REDIS_PORT --dir $REDIS_DATA_DIR
+    readiness_probe:
+      exec:
+        command: redis-cli -h $REDIS_HOST -p $REDIS_PORT ping
+      initial_delay_seconds: 1
+      period_seconds: 2
+    availability:
+      restart: on_failure
+
+  elasticsearch:
+    command: |
+      elasticsearch \
+        -Epath.data=$ELASTICSEARCH_DATA_DIR \
+        -Epath.logs=$ELASTICSEARCH_LOG_DIR \
+        -Ehttp.port=$ELASTICSEARCH_PORT \
+        -Expack.security.enabled=false \
+        -Ediscovery.type=single-node
+    readiness_probe:
+      http_get:
+        host: 127.0.0.1
+        port: 9200
+        path: /_cluster/health
+      initial_delay_seconds: 15
+      period_seconds: 5
+      timeout_seconds: 10
+    availability:
+      restart: on_failure
+
+groups:
+  services:
+    processes:
+      - mysql
+      - redis
+      - elasticsearch

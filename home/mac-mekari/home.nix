@@ -77,6 +77,8 @@ in
       ".zshrc".source = "${dotfiles}/.zshrc";
       ".mac.plugin.zsh".source = "${dotfiles}/.mac.plugin.zsh";
       ".linux.plugin.zsh".source = "${dotfiles}/.linux.plugin.zsh";
+      ".dev-mekari.plugin.zsh".source = "${dotfiles}/.dev-mekari.plugin.zsh";
+      ".dev-boon.plugin.zsh".source = "${dotfiles}/.dev-boon.plugin.zsh";
       ".p10k.zsh".source = "${dotfiles}/.p10k.zsh";
       ".p10k-light.zsh".source = "${dotfiles}/.p10k-light.zsh";
       ".tmux.conf".source = "${dotfiles}/.tmux.conf";

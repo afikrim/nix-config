@@ -6,7 +6,7 @@
 
 let
   # Build Ruby 3.3.6 from source to match Gemfile requirement
-  ruby = pkgs.callPackage ../pkgs/ruby_3_3_6.nix { };
+  ruby = pkgs.callPackage ../../pkgs/ruby_3_3_6.nix { };
 in
 pkgs.mkShell {
   name = "boon-core-devshell";

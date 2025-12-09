@@ -42,6 +42,7 @@
       darwinPkgs = import nixpkgs {
         system = darwinSystem;
         config.allowUnfree = true;
+        config.permittedInsecurePackages = [ "openssl-1.1.1w" ];
         inherit overlays;
       };
       dotfiles = lib.cleanSource ./home;
@@ -96,36 +97,43 @@
         aarch64-darwin = {
           boon-core = import ./devshells/boon-core/shell.nix { pkgs = darwinPkgs; };
           accounting_service = import ./devshells/accounting_service/shell.nix { pkgs = darwinPkgs; };
+          quickbook = import ./devshells/quickbook/shell.nix { pkgs = darwinPkgs; };
         };
         x86_64-darwin = let
           x86Pkgs = import nixpkgs {
             system = "x86_64-darwin";
             config.allowUnfree = true;
+            config.permittedInsecurePackages = [ "openssl-1.1.1w" ];
             inherit overlays;
           };
         in {
           boon-core = import ./devshells/boon-core/shell.nix { pkgs = x86Pkgs; };
-          accounting_service = import ./devshells/accounting_service/shell.nix { pkgs = darwinPkgs; };
+          accounting_service = import ./devshells/accounting_service/shell.nix { pkgs = x86Pkgs; };
+          quickbook = import ./devshells/quickbook/shell.nix { pkgs = x86Pkgs; };
         };
         aarch64-linux = let
           linuxPkgs = import nixpkgs {
             system = linuxSystem;
             config.allowUnfree = true;
+            config.permittedInsecurePackages = [ "openssl-1.1.1w" ];
             inherit overlays;
           };
         in {
           boon-core = import ./devshells/boon-core/shell.nix { pkgs = linuxPkgs; };
-          accounting_service = import ./devshells/accounting_service/shell.nix { pkgs = darwinPkgs; };
+          accounting_service = import ./devshells/accounting_service/shell.nix { pkgs = linuxPkgs; };
+          quickbook = import ./devshells/quickbook/shell.nix { pkgs = linuxPkgs; };
         };
         x86_64-linux = let
           x86LinuxPkgs = import nixpkgs {
             system = "x86_64-linux";
             config.allowUnfree = true;
+            config.permittedInsecurePackages = [ "openssl-1.1.1w" ];
             inherit overlays;
           };
         in {
           boon-core = import ./devshells/boon-core/shell.nix { pkgs = x86LinuxPkgs; };
-          accounting_service = import ./devshells/accounting_service/shell.nix { pkgs = darwinPkgs; };
+          accounting_service = import ./devshells/accounting_service/shell.nix { pkgs = x86LinuxPkgs; };
+          quickbook = import ./devshells/quickbook/shell.nix { pkgs = x86LinuxPkgs; };
         };
       };
     };

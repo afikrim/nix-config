@@ -157,8 +157,6 @@ EOF
 }
 EOF
 
-
-
   echo "→ Restoring local dev setup…"
   ln -sf ~/nix-config/devshells/accounting_service/.envrc .envrc
   ln -sf ~/nix-config/devshells/accounting_service/shell.nix shell.nix
@@ -200,27 +198,10 @@ __git_worktree_quickbook() {
   cd "$dir" || return 1
   __mekari_tmux_tab "$branch"
 
-  echo "→ Restoring specific files from aziz/local-setup…"
-  for file in \
-    .claude/settings.json \
-    .claude/settings.local.json \
-    CLAUDE.md \
-    Gemfile \
-    Gemfile.lock \
-    config/application.rb \
-    config/database.yml \
-    config/initializers/rack_timeout.rb \
-    .env \
-    .python-version \
-    .ruby-version
-  do
-    echo "  - Restoring $file"
-    git checkout aziz/local-setup -- "$file" 2>/dev/null || echo "    (skipped - file not in aziz/local-setup)"
-  done
-
-  echo "→ Setting Node.js version to v14 using nvm…"
-  nvm install v14 || return 1
-  nvm use v14 || return 1
+  echo "→ Restoring local dev setup…"
+  ln -sf ~/nix-config/devshells/quickbook/.envrc .envrc
+  ln -sf ~/nix-config/devshells/quickbook/shell.nix shell.nix
+  ln -sf ~/nix-config/devshells/quickbook/process-compose.yaml process-compose.yaml
 
   echo "→ Installing dependencies…"
   yarn install || return 1
