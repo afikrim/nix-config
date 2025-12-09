@@ -159,6 +159,7 @@ in
         hostname = "ssh.azifexlab.net";
         user = "azizf";
         proxyCommand = "${pkgs.cloudflared}/bin/cloudflared access ssh --hostname %h";
+        identityFile = "${config.home.homeDirectory}/.ssh/id_ed25519";
       };
     };
   };
