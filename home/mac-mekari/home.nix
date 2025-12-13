@@ -51,6 +51,8 @@ let
       bun
       flutter
       github-copilot-cli
+      uv
+      posting
     ]);
 in
 {

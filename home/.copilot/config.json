@@ -1,9 +1,9 @@
 {
   "banner": "never",
-  "model": "gpt-5.1-codex",
+  "model": "claude-sonnet-4.5",
   "render_markdown": true,
   "screen_reader": false,
-  "theme": "light",
+  "theme": "dark",
   "trusted_folders": [
     "/Users/mekari/Code/Mekari/aziz/atfin-9221/implement-feature-flag-credit-card",
     "/Users/mekari/Code/Mekari/aziz/atfin-9301/correct-bank-statement-calculation-for-credit-card",
@@ -30,7 +30,5 @@
     "/Users/mekari/Code/Mekari/aziz/atfin-9655",
     "/Users/mekari"
   ],
-  "asked_setup_terminals": [
-    "vscode"
-  ]
+  "asked_setup_terminals": ["vscode"]
 }

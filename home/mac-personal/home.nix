@@ -51,6 +51,8 @@ let
       bun
       flutter
       google-cloud-sdk
+      uv
+      posting
     ]);
   # SSH authorized keys for remote access
   authorizedKeys = ''
