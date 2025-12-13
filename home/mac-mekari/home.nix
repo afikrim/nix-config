@@ -66,8 +66,21 @@ in
     (with pkgs; [
       alacritty
       brave
+      chafa
+      fzf
+      ghostscript
+      imagemagick
+      lua5_1
+      luarocks
       neovim
+      nodePackages_latest.mermaid-cli
+      rust-analyzer
+      tectonic
+      trash-cli
+      ueberzugpp
+      viu
       vscode
+      wezterm
     ])
     ++ devToolPackages
     ++ [ terminalNotifier ];
