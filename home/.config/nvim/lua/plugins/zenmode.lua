@@ -50,13 +50,6 @@ return {
         enabled = false,
         font = "+4", -- font size increment
       },
-      -- this will change the font size on alacritty when in zen mode
-      -- requires  Alacritty Version 0.10.0 or higher
-      -- uses `alacritty msg` subcommand to change font size
-      alacritty = {
-        enabled = false,
-        font = "14", -- font size
-      },
       -- this will change the font size on wezterm when in zen mode
       -- See alse also the Plugins/Wezterm section in this projects README
       wezterm = {

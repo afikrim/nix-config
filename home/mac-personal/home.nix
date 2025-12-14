@@ -36,13 +36,7 @@ let
   cloudflareTokenFile = "${toString repoRoot}/secrets/mac-personal/cloudflare-tunnel-token.sops.txt";
   cloudflareTokenExists = builtins.pathExists cloudflareTokenFile;
   cloudflareTokenPath = if cloudflareTokenExists then builtins.path { path = cloudflareTokenFile; name = "mac-personal-cloudflare-tunnel-token"; } else null;
-  alacrittyThemes = pkgs.fetchFromGitHub {
-    owner = "alacritty";
-    repo = "alacritty-theme";
-    rev = "f82c742634b5e840731dd7c609e95231917681a5";
-    hash = "sha256-Jcxl1/fEWXPXVdJxRonXJpJx/5iQvTHfZqvd18gjvGk=";
-  };
-  defaultAlacrittyTheme = "${alacrittyThemes}/themes/one_light.toml";
+  defaultKittyTheme = "${dotfiles}/.config/kitty/themes/one_light.conf";
   terminalNotifier = pkgs.callPackage ../../pkgs/terminal-notifier-xcode.nix { };
   devToolPackages =
     (with pkgs; [
@@ -79,7 +73,7 @@ in
 
   home.packages =
     (with pkgs; [
-      alacritty
+      kitty
       brave
       chafa
       fzf
@@ -127,13 +121,13 @@ in
       ".codex/notify.sh".source = "${dotfiles}/.codex/notify.sh";
       ".copilot/config.json".source = "${dotfiles}/.copilot/config.json";
       ".copilot/mcp-config.json".source = "${dotfiles}/.copilot/mcp-config.json";
-      ".config/alacritty/alacritty.toml".source = "${dotfiles}/.config/alacritty/alacritty.toml";
+      ".config/kitty/kitty.conf".source = "${dotfiles}/.config/kitty/kitty.conf";
       ".config/scripts/theme-switcher.sh" = {
         source = "${dotfiles}/.config/scripts/theme-switcher.sh";
         executable = true;
       };
-      ".config/alacritty/themes" = {
-        source = "${alacrittyThemes}/themes";
+      ".config/kitty/themes" = {
+        source = "${dotfiles}/.config/kitty/themes";
         recursive = true;
       };
       ".zsh" = {
@@ -187,25 +181,25 @@ in
                "$HOME/Development/azifex" \
                "$HOME/Development/afikrim"
     '';
-    prepareAlacrittyDir = lib.hm.dag.entryAfter [ "developmentDirs" ] ''
-      target="$HOME/.config/alacritty"
+    prepareKittyDir = lib.hm.dag.entryAfter [ "developmentDirs" ] ''
+      target="$HOME/.config/kitty"
       if [ -L "$target" ]; then
         rm "$target"
       fi
       mkdir -p "$target"
     '';
-    cleanAlacrittyThemes = lib.hm.dag.entryAfter [ "prepareAlacrittyDir" ] ''
-      target="$HOME/.config/alacritty/themes"
-      if [ -d "$target" ] && [ ! -L "$target" ]; then
+    cleanKittyThemes = lib.hm.dag.entryAfter [ "prepareKittyDir" ] ''
+      target="$HOME/.config/kitty/themes"
+      if [ -e "$target" ] || [ -L "$target" ]; then
         rm -rf "$target"
       fi
     '';
-    ensureAiAppDirs = lib.hm.dag.entryAfter [ "cleanAlacrittyThemes" ] ''
+    ensureAiAppDirs = lib.hm.dag.entryAfter [ "cleanKittyThemes" ] ''
       mkdir -p "$HOME/.codex" "$HOME/.copilot" "$HOME/.claude/commands"
     '';
-    ensureAlacrittyThemeLink = lib.hm.dag.entryAfter [ "cleanAlacrittyThemes" ] ''
-      theme_link="$HOME/.config/alacritty/current-theme.toml"
-      default_theme="${defaultAlacrittyTheme}"
+    ensureKittyThemeLink = lib.hm.dag.entryAfter [ "cleanKittyThemes" ] ''
+      theme_link="$HOME/.config/kitty/current-theme.conf"
+      default_theme="${defaultKittyTheme}"
       if [ ! -L "$theme_link" ] && [ ! -f "$theme_link" ]; then
         ln -sf "$default_theme" "$theme_link"
       fi

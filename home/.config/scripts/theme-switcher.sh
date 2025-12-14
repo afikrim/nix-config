@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
 # ~/.config/scripts/theme-switcher.sh
-# Automatic theme switcher for zsh/powerlevel10k, tmux, and alacritty
+# Automatic theme switcher for zsh/powerlevel10k, tmux, and kitty
 
 set -euo pipefail
 
 # Configuration paths
 ZSH_CONFIG="$HOME/.zshrc"
 TMUX_CONFIG="$HOME/.tmux.conf"
-ALACRITTY_THEMES_DIR="$HOME/.config/alacritty/themes"
-ALACRITTY_THEME_LINK="$HOME/.config/alacritty/current-theme.toml"
+KITTY_THEMES_DIR="$HOME/.config/kitty/themes"
+KITTY_THEME_LINK="$HOME/.config/kitty/current-theme.conf"
 P10K_LIGHT_CONFIG="$HOME/.p10k-light.zsh"
 P10K_DARK_CONFIG="$HOME/.p10k.zsh"
 
@@ -54,8 +54,8 @@ detect_system_theme() {
   fi
 }
 
-# Update Alacritty theme by moving the writable link
-update_alacritty_theme() {
+# Update Kitty theme by moving the writable link
+update_kitty_theme() {
   local theme=$1
   local theme_name target
 
@@ -65,16 +65,16 @@ update_alacritty_theme() {
     theme_name=$LIGHT_THEME_NAME
   fi
 
-  target="$ALACRITTY_THEMES_DIR/${theme_name}.toml"
+  target="$KITTY_THEMES_DIR/${theme_name}.conf"
 
   if [[ ! -f "$target" ]]; then
-    echo "Alacritty theme $target not found"
+    echo "Kitty theme $target not found"
     return 1
   fi
 
-  mkdir -p "$(dirname "$ALACRITTY_THEME_LINK")"
-  ln -sf "$target" "$ALACRITTY_THEME_LINK"
-  echo "Updated Alacritty theme to $theme ($theme_name)"
+  mkdir -p "$(dirname "$KITTY_THEME_LINK")"
+  ln -sf "$target" "$KITTY_THEME_LINK"
+  echo "Updated Kitty theme to $theme ($theme_name)"
 }
 
 # Update tmux theme live without editing the config file
@@ -125,7 +125,7 @@ main() {
 
   echo "Detected system theme: $current_theme"
 
-  update_alacritty_theme "$current_theme"
+  update_kitty_theme "$current_theme"
   update_tmux_theme "$current_theme"
   update_shell_theme "$current_theme"
 

@@ -164,9 +164,9 @@ in
       deps = [ "users" ];
       text = ''
         install -d -m755 -o azizf -g ${azizGroup} /home/azizf/.config
-        rm -rf /home/azizf/.config/alacritty
         rm -rf /home/azizf/.config/nvim
         rm -rf /home/azizf/.config/sketchybar
+        rm -rf /home/azizf/.config/kitty
         rm -rf /home/azizf/.zsh
         rm -rf /home/azizf/.tmux
 
@@ -263,10 +263,10 @@ ${installZshPlugins}
     hypridle
     hyprlock
 
-    alacritty
-    (writeShellScriptBin "alacritty-soft" ''
+    kitty
+    (writeShellScriptBin "kitty-soft" ''
       export LIBGL_ALWAYS_SOFTWARE=1
-      exec alacritty "$@"
+      exec kitty "$@"
     '' )
 
     waybar

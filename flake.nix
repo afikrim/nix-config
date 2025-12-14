@@ -3,6 +3,7 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
+    nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
     nix-darwin = {
       url = "github:LnL7/nix-darwin";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -18,7 +19,7 @@
     nixpkgs-legacy.url = "github:NixOS/nixpkgs/nixos-21.11";
   };
 
-  outputs = { self, nixpkgs, nix-darwin, home-manager, sops-nix, nixpkgs-legacy }:
+  outputs = { self, nixpkgs, nix-darwin, home-manager, sops-nix, nixpkgs-legacy, nixpkgs-unstable }:
     let
       lib = nixpkgs.lib;
       linuxSystem = "aarch64-linux";
@@ -39,7 +40,20 @@
           }
         else
           { };
-      overlays = [ braveOverlay ];
+      unstableOverlay = final: prev:
+        let
+          unstablePkgs = import nixpkgs-unstable {
+            system = prev.stdenv.hostPlatform.system;
+            config.allowUnfree = true;
+            config.permittedInsecurePackages = [ "openssl-1.1.1w" ];
+          };
+        in
+        {
+          codex = unstablePkgs.codex;
+          claude-code = unstablePkgs.claude-code;
+          github-copilot-cli = unstablePkgs.github-copilot-cli;
+        };
+      overlays = [ braveOverlay unstableOverlay ];
       mkPkgsFor = system: import nixpkgs {
         inherit system overlays;
         config.allowUnfree = true;
