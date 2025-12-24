@@ -37,6 +37,10 @@ let
   cloudflareTokenExists = builtins.pathExists cloudflareTokenFile;
   cloudflareTokenPath = if cloudflareTokenExists then builtins.path { path = cloudflareTokenFile; name = "mac-mekari-cloudflare-tunnel-token"; } else null;
   defaultKittyTheme = "${dotfiles}/.config/kitty/themes/one_light.conf";
+  isDarwin = pkgs.stdenv.isDarwin;
+  themeSwitcherScript = "${config.home.homeDirectory}/.config/scripts/theme-switcher.sh";
+  globalPreferencesPlist = "${config.home.homeDirectory}/Library/Preferences/.GlobalPreferences.plist";
+  kittyThemeLogDir = "${config.home.homeDirectory}/Library/Logs";
   terminalNotifier = pkgs.callPackage ../../pkgs/terminal-notifier-xcode.nix { };
   devToolPackages =
     (with pkgs; [
@@ -77,6 +81,7 @@ in
       viu
       vscode
       wezterm
+      pritunl-client
     ])
     ++ devToolPackages
     ++ [ terminalNotifier ];
@@ -186,6 +191,21 @@ in
     enable = true;
   };
 
+  launchd.agents.kittyThemeSwitcher = lib.mkIf isDarwin {
+    enable = true;
+    config = {
+      Label = "com.azifex.kitty-theme-switcher";
+      ProgramArguments = [ themeSwitcherScript ];
+      RunAtLoad = true;
+      WatchPaths = [ globalPreferencesPlist ];
+      StandardOutPath = "${kittyThemeLogDir}/kitty-theme-switcher.log";
+      StandardErrorPath = "${kittyThemeLogDir}/kitty-theme-switcher.err.log";
+      EnvironmentVariables = {
+        PATH = "${config.home.homeDirectory}/.nix-profile/bin:/run/current-system/sw/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin";
+      };
+    };
+  };
+
   home.activation = {
     ensureCloudflaredDir = lib.hm.dag.entryBefore [ "sopsNix" ] ''
       mkdir -p "$HOME/.config/cloudflared"
@@ -216,6 +236,9 @@ in
       default_theme="${defaultKittyTheme}"
       if [ ! -L "$theme_link" ] && [ ! -f "$theme_link" ]; then
         ln -sf "$default_theme" "$theme_link"
+      fi
+      if [ -x "${themeSwitcherScript}" ]; then
+        "${themeSwitcherScript}" >/dev/null 2>&1 || true
       fi
     '';
     importGpgKey = lib.hm.dag.entryAfter [ "sopsNix" ] ''

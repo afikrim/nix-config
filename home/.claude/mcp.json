@@ -9,7 +9,7 @@
     },
     "omnisearch": {
       "command": "npx",
-      "args": ["-y", "mcp-omnisearch"],
+      "args": ["-y", "mcp-omnisearch@0.0.17"],
       "env": {
         "TAVILY_API_KEY": "${TAVILY_API_KEY}",
         "BRAVE_API_KEY": "${BRAVE_API_KEY}"

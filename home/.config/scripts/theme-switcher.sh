@@ -57,7 +57,7 @@ detect_system_theme() {
 # Update Kitty theme by moving the writable link
 update_kitty_theme() {
   local theme=$1
-  local theme_name target
+  local theme_name target current_target
 
   if [[ "$theme" == "dark" ]]; then
     theme_name=$DARK_THEME_NAME
@@ -72,9 +72,23 @@ update_kitty_theme() {
     return 1
   fi
 
-  mkdir -p "$(dirname "$KITTY_THEME_LINK")"
-  ln -sf "$target" "$KITTY_THEME_LINK"
-  echo "Updated Kitty theme to $theme ($theme_name)"
+  if [[ -L "$KITTY_THEME_LINK" ]]; then
+    current_target=$(readlink "$KITTY_THEME_LINK" || true)
+  else
+    current_target=""
+  fi
+
+  if [[ "$current_target" == "$target" ]]; then
+    echo "Kitty already using $theme ($theme_name)"
+  else
+    mkdir -p "$(dirname "$KITTY_THEME_LINK")"
+    ln -sf "$target" "$KITTY_THEME_LINK"
+    echo "Updated Kitty theme to $theme ($theme_name)"
+  fi
+
+  if command -v kitty >/dev/null 2>&1; then
+    kitty @ set-colors --all --configured "$target" >/dev/null 2>&1 || true
+  fi
 }
 
 # Update tmux theme live without editing the config file

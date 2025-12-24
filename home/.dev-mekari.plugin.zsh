@@ -111,7 +111,7 @@ EOF
     },
     "omnisearch": {
       "command": "npx",
-      "args": ["-y", "mcp-omnisearch"],
+      "args": ["-y", "mcp-omnisearch@0.0.17"],
       "envFile": "${workspaceFolder}/.vscode/.env"
     },
 

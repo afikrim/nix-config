@@ -224,9 +224,10 @@ ${installZshPlugins}
     codex
     claude-code
     firefox
+    pritunl-client
     (writeShellScriptBin "brave-soft" ''
       export LIBGL_ALWAYS_SOFTWARE=1
-    
+
       exec brave \
         --use-gl=swiftshader \
         --disable-gpu \
