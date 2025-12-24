@@ -45,6 +45,7 @@ let
   devToolPackages =
     (with pkgs; [
       nodejs_24
+      go_1_24
       pnpm
       bun
       flutter
@@ -178,6 +179,11 @@ in
         hostname = "ssh.azifexlab.net";
         user = "azizf";
         proxyCommand = "${pkgs.cloudflared}/bin/cloudflared access ssh --hostname %h";
+        identityFile = "${config.home.homeDirectory}/.ssh/id_ed25519";
+      };
+      "mac-personal.local" = {
+        hostname = "192.168.1.26";
+        user = "azizf";
         identityFile = "${config.home.homeDirectory}/.ssh/id_ed25519";
       };
     };
